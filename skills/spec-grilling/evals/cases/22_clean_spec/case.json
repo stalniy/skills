@@ -13,7 +13,11 @@
       "user": "Review the specification with the spec-grilling skill.",
       "expected": {
         "interactive_max": 0
-      }
+      },
+      "assertions": [
+        "Does not invent an interactive issue or redesign a settled specification.",
+        "Writes and links .spec-grill/spec/decision-graph.ai.md with interactive complete metadata, recording relevant settled load-bearing decisions and evidence without reopening them. If no load-bearing decisions exist, records an explicit empty graph."
+      ]
     }
   ]
 }

@@ -1,5 +1,6 @@
 ---
 name: spec-grilling
+license: Apache-2.0
 description: Stress-test and improve a specification by resolving strategic, hard-to-reverse uncertainty first, then fixing lower-impact issues. Use when the user wants to review, refine, challenge, or improve a spec before implementation.
 disable-model-invocation: true
 ---
@@ -78,7 +79,7 @@ A lower-impact detail can become load-bearing if its possible values materially 
 
 ## Load-bearing frontier
 
-Model the specification as a design tree.
+Model the specification as a decision graph. Dependencies can have multiple parents.
 
 The **load-bearing frontier** contains load-bearing issues that can be resolved independently with the current information.
 
@@ -95,7 +96,7 @@ After each user decision:
 1. apply accepted or edited decisions;
 2. record scope boundaries;
 3. update relevant project knowledge;
-4. recompute the design tree;
+4. recompute the decision graph;
 5. present the new load-bearing frontier.
 
 Continue until the frontier is empty.
@@ -214,16 +215,29 @@ Treat their domain terms as the ubiquitous language.
 
 Do not simplify established domain terms away.
 
+## Decision graph artifact
+
+Before discovery or graph changes, read [`../references/decision-graph.md`](../references/decision-graph.md). It is the authority for artifact location, metadata, node structure, statuses, provenance, dependency semantics, and changes. Maintain `decision-graph.ai.md` as the durable input for later complexity reduction.
+
+Before discovery, read any existing graph and reconcile it with the current specification and project evidence. Record relevant settled load-bearing decisions without reopening them merely to populate the graph.
+
+In interactive mode, use interactive in-progress metadata while review continues, then complete metadata when the full review is complete. Write the graph before presenting each frontier, after user decisions and dependent recomputation, and after final cleanup. Explore only the currently supported frontier; recording the graph does not authorize provisional exploration of unresolved dependent branches. The completed graph must cover all identified in-scope load-bearing decisions and relevant scope boundaries, including reviews that find no new issues.
+
+Interactive mode needs no user-editable companion file. If an existing graph belongs to an automatic pending batch, preserve both review files and follow `spec-grilling-auto` reconciliation before changing the graph. The automatic skill overrides artifact publication and review metadata as described in its two-file protocol.
+
+Link the graph in the final response and identify its review status. Record provisional recommendations only in the graph, not as accepted project knowledge.
+
 ## Knowledge artifacts
 
 Maintain:
 
+- `decision-graph.ai.md` as described above;
 - the specification;
 - ADRs;
 - `GLOSSARY.md`;
 - `CONTEXT.md`.
 
-For load-bearing decisions, update artifacts only after `accept` or `edit`.
+For load-bearing decisions, update the specification, ADRs, context, and glossary only after `accept` or `edit`. The decision graph also records provisional recommendations before acceptance.
 
 For `out of scope`, record the scope boundary when it matters for future work. Do not record the proposed resolution as accepted.
 
@@ -231,6 +245,7 @@ During cleanup, update artifacts for lower-impact changes that follow from accep
 
 Use each artifact for one purpose:
 
+- **Decision graph:** decision provenance, dependencies, recommendations, and review state.
 - **Specification:** required behavior, constraints, and scope.
 - **ADR:** important accepted decisions and their reasons.
 - **GLOSSARY.md:** ubiquitous language.
@@ -311,6 +326,7 @@ At the end:
 4. list important out-of-scope decisions;
 5. report cleanup issues and resolutions as described under Cleanup mode, or state that none were found;
 6. list unresolved factual dependencies;
-7. provide short feedback for the author.
+7. provide short feedback for the author;
+8. link the completed `decision-graph.ai.md` for downstream complexity reduction.
 
 Do not start implementation unless the user explicitly asks for it.

@@ -18,7 +18,8 @@
         "interactive_max": 1
       },
       "assertions": [
-        "Presents a concrete Job/Attempt identity recommendation first, defers dependent idempotency-key scope, and waits for acceptance without establishing the proposed contract in files."
+        "Presents a concrete Job/Attempt identity recommendation first, defers dependent idempotency-key scope, and waits for acceptance without establishing the proposed contract in accepted project knowledge.",
+        "Writes .spec-grill/spec/decision-graph.ai.md with interactive in-progress metadata and the identity recommendation marked provisional; does not provisionally resolve the dependent key-scope decision."
       ]
     },
     {
@@ -30,7 +31,8 @@
       "assertions": [
         "Applies the identity recommendation from the actual previous assistant response to SPEC.md, an ADR, and relevant context and glossary artifacts, without substituting a different identity model.",
         "Presents idempotency-key scope as a separate concrete load-bearing recommendation consistent with the accepted identity model, explains strategic impact and change cost, and offers accept, edit, and out of scope.",
-        "Preserves earlier project file changes and does not record the key-scope proposal as accepted or start implementation."
+        "Preserves earlier project file changes and does not record the key-scope proposal as accepted or start implementation.",
+        "Updates the same decision graph, preserves the identity issue ID and marks it accepted, and records the newly presented key-scope recommendation as provisional with a dependency on identity."
       ]
     },
     {
@@ -41,7 +43,8 @@
       "assertions": [
         "Applies the actual previous key-scope recommendation and preserves the accepted identity decision and artifacts from prior turns.",
         "Completes SPEC.md and relevant ADR, CONTEXT.md, and GLOSSARY.md changes, keeping artifact purposes distinct.",
-        "Ends SPEC.md with Out of scope followed by Cleanup summary; records cleanup resolutions or None, and reports no unresolved in-scope load-bearing uncertainty without starting implementation."
+        "Ends SPEC.md with Out of scope followed by Cleanup summary; records cleanup resolutions or None, and reports no unresolved in-scope load-bearing uncertainty without starting implementation.",
+        "Completes and links decision-graph.ai.md with interactive complete metadata, stable IDs, accepted identity and key-scope decisions, dependency edges, and evidence; creates no automatic review companion file."
       ]
     }
   ]

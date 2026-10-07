@@ -96,6 +96,9 @@ it("carries actual conversation responses, changed and deleted files into the ne
     const files = await snapshot(workspace);
     expect(files["SPEC.md"]).toBe("Updated evidence");
     expect(files["notes/CONTEXT.md"]).toBe("Current context");
+    expect(files["references/decision-graph.md"]).toBe(
+      await readFile(resolve("skills/references/decision-graph.md"), "utf8")
+    );
     expect(files).not.toHaveProperty("obsolete.md");
     expect(files["TASK.md"]).toContain(output.response);
     expect(files["TASK.md"]).toContain(next.prompt);

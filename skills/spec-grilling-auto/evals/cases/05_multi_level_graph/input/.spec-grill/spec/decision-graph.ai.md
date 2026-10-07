@@ -1,5 +1,6 @@
 ---
-review-status: complete
+review-mode: automatic
+review-status: pending
 ---
 # Spec review
 ## S1
@@ -17,7 +18,7 @@ affects: [S4, S5]
 ### Issue
 Branch choice.
 ### Decision
-B2.
+B.
 ## S3
 status: provisional
 depends-on: [S1]

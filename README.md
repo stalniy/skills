@@ -5,13 +5,16 @@ Agent skills for reviewing and improving software specifications.
 ## Skills
 
 - **spec-grilling** (`skills/spec-grilling`): Interactive review that resolves high-impact, costly-to-change decisions with the author, then handles lower-impact by itself.
-- **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision tree for later review.
+- **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision graph for later review.
 
-Each skill is defined by its `SKILL.md`. The automatic skill builds on the policies in `spec-grilling/SKILL.md`.
+
+Each skill is defined by its `SKILL.md`. Both modes store `.spec-grill/<spec-slug>/decision-graph.ai.md` for downstream complexity reduction. The automatic mode also maintains the user-editable `decision-graph.md`.
+
+The automatic skill builds on the policies in `spec-grilling/SKILL.md`.
 
 ## Use
 
-Copy or link the desired skill directory into the skills location supported by your agent. Keep the full directory so its supporting files and evaluation fixtures remain available.
+Copy or link the desired skill directory into the skills location supported by your agent. Keep the full directory so its supporting files and evaluation fixtures remain available. Also keep `skills/references/` as a sibling of the installed skill directories; all graph producers and consumers read its [decision graph contract](skills/references/decision-graph.md).
 
 ## Development
 

@@ -1,6 +1,6 @@
 # Automatic Review Evals
 
-Each scenario lives in `cases/<case>/`. Its `case.json` contains the title, summary, tags, user turn, and behavioral assertions; `input/` contains the repository files supplied to that turn. Existing decision-tree files are starting states, not expected outputs.
+Each scenario lives in `cases/<case>/`. Its `case.json` contains the title, summary, tags, user turn, and behavioral assertions; `input/` contains the repository files supplied to that turn. Existing decision-graph files are starting states, not expected outputs.
 
 The nine cases cover:
 
