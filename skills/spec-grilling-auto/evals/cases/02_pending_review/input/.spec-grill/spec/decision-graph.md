@@ -1,4 +1,5 @@
 ---
+review-mode: automatic
 review-status: pending
 ---
 

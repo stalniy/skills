@@ -5,7 +5,7 @@
   "tags": ["dependency-graph", "transitive-invalidation", "stable-ids"],
   "turns": [
     {
-      "user": "Complete the review using my edit to S1. Recompute the affected decision tree.",
+      "user": "Complete the review using my edit to S1. Recompute the affected decision graph.",
       "assertions": [
         "Accepts the S1 edit and recomputes S2 and S3 plus transitive descendants S4, S5, and S6 as provisional under their existing IDs.",
         "Preserves independent S7 as accepted and unchanged without fresh grilling.",

@@ -1,9 +1,10 @@
 ---
-review-status: pending
+review-mode: automatic
+review-status: complete
 ---
 # Spec review
 ## S1
-status: provisional
+status: out-of-scope
 depends-on: []
 affects: []
 ### Issue
@@ -16,3 +17,7 @@ Changing recovery later changes durable state ownership and requires migration.
 - `SPEC.md`
 ### Assumptions
 - None
+### Out-of-scope reason
+Cross-region recovery is deferred to a later specification.
+### Boundary
+This release runs in one region and promises no cross-region Session continuity. No current requirement depends on recovery topology.

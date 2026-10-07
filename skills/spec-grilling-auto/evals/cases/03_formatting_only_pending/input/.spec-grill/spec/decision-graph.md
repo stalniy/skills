@@ -1,4 +1,5 @@
 ---
+review-mode: automatic
 review-status: pending
 ---
 
@@ -9,23 +10,14 @@ review-status: pending
 status: provisional
 depends-on: []
 affects: []
-
 ### Issue
-
 Job identity is undefined.
-
 ### Decision
-
-A retry keeps the same Job.
-
+A retry keeps
+the same Job.
 ### Why load-bearing
-
 Changing identity later changes durable client contracts.
-
 ### Evidence
-
 - `SPEC.md`
-
 ### Assumptions
-
 - None
