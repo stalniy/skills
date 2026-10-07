@@ -1,0 +1,48 @@
+{
+  "id": "31_actual_identity_conversation",
+  "title": "Actual recommendations and project artifacts survive acceptance and dependent decisions",
+  "mode": "conversation",
+  "expected_summary": "Reviews identity, applies its actual accepted recommendation, then resolves key scope and completes project artifacts across three real candidate turns.",
+  "tags": [
+    "multi-turn",
+    "frontier",
+    "accepted-decision",
+    "must-have",
+    "long-expensive"
+  ],
+  "turns": [
+    {
+      "user": "Review SPEC.md before implementation. Present the independent load-bearing frontier.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 1
+      },
+      "assertions": [
+        "Presents a concrete Job/Attempt identity recommendation first, defers dependent idempotency-key scope, and waits for acceptance without establishing the proposed contract in files."
+      ]
+    },
+    {
+      "user": "Accept the Job/Attempt identity recommendation you just made. Apply it to the project documents and review the next load-bearing frontier.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 1
+      },
+      "assertions": [
+        "Applies the identity recommendation from the actual previous assistant response to SPEC.md, an ADR, and relevant context and glossary artifacts, without substituting a different identity model.",
+        "Presents idempotency-key scope as a separate concrete load-bearing recommendation consistent with the accepted identity model, explains strategic impact and change cost, and offers accept, edit, and out of scope.",
+        "Preserves earlier project file changes and does not record the key-scope proposal as accepted or start implementation."
+      ]
+    },
+    {
+      "user": "Accept the idempotency-key scope recommendation you just made. Apply it and finish the specification review.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Applies the actual previous key-scope recommendation and preserves the accepted identity decision and artifacts from prior turns.",
+        "Completes SPEC.md and relevant ADR, CONTEXT.md, and GLOSSARY.md changes, keeping artifact purposes distinct.",
+        "Ends SPEC.md with Out of scope followed by Cleanup summary; records cleanup resolutions or None, and reports no unresolved in-scope load-bearing uncertainty without starting implementation."
+      ]
+    }
+  ]
+}

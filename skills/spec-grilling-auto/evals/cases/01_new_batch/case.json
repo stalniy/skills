@@ -1,0 +1,17 @@
+{
+  "id": "01_new_batch",
+  "title": "Create a provisional decision batch",
+  "expected_summary": "Creates a paired provisional decision tree, explores supported dependent choices, and keeps provisional recommendations out of final knowledge.",
+  "tags": ["new-batch", "dependencies", "provisional-knowledge"],
+  "turns": [
+    {
+      "user": "Use spec-grilling-auto to review SPEC.md. Continue through dependent choices without waiting for me.",
+      "assertions": [
+        "Creates .spec-grill/spec/decision-tree.ai.md and decision-tree.md with byte-identical content and review-status: pending.",
+        "Finds supported load-bearing choices, including the dependent reconnect policy, and gives stable IDs, evidence, assumptions, depends-on, and affects; keeps the configurable refresh time out of the tree.",
+        "Marks all new recommendations provisional and explains any credible alternatives without inventing filler alternatives.",
+        "Does not put a provisional ownership, conflict, or ID-scope decision into final specification, ADR, CONTEXT.md, or GLOSSARY.md knowledge."
+      ]
+    }
+  ]
+}

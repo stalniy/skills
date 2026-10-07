@@ -1,0 +1,16 @@
+{
+  "id": "07_scope_boundary_and_cleanup",
+  "title": "Keep a blocking deferred issue unresolved",
+  "expected_summary": "Does not declare the in-scope continuity guarantee settled while its design dependency remains unresolved and out of scope.",
+  "tags": ["scope", "dependency", "cleanup-blocked"],
+  "turns": [
+    {
+      "user": "Review SPEC.md automatically; cross-region recovery is out of scope for this release.",
+      "assertions": [
+        "Does not silently treat cross-region recovery as solved or declare the spec ready while the in-scope Session guarantee depends on it.",
+        "Requires both an out-of-scope reason and a concrete boundary, or recommends bringing the dependent behavior into scope or deferring it.",
+        "Does not run cleanup before the load-bearing tree is settled."
+      ]
+    }
+  ]
+}

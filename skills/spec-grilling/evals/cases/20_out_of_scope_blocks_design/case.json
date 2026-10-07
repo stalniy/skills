@@ -1,0 +1,36 @@
+{
+  "id": "20_out_of_scope_blocks_design",
+  "title": "Out-of-scope concern cannot be deferred if in-scope behavior depends on it",
+  "expected_summary": "After the user tries to mark cross-region failover out of scope, the agent must explain that the in-scope global-session guarantee depends on it and offer to move the guarantee out of scope, define an isolating boundary, or bring the decision back into scope.",
+  "tags": [
+    "multi-turn",
+    "out-of-scope",
+    "dependency",
+    "must-have",
+    "long-expensive"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "assertions": [
+        "Raises cross-region failover as load-bearing because the in-scope same-Session guarantee depends on it."
+      ],
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    },
+    {
+      "user": "out of scope S1",
+      "prior_assistant_response": "S1 — Cross-region failover. The promised Session continuity requires a consistency and recovery contract. Recommend resolving that contract before implementation. accept · edit · out of scope",
+      "assertions": [
+        "Recognizes that the in-scope same-Session guarantee depends on the deferred failover decision.",
+        "Recommends a concrete scope change or boundary contract, or bringing the decision back into scope.",
+        "Does not call the specification implementation-ready or implement the API."
+      ],
+      "expected": {
+        "interactive_min": 1
+      }
+    }
+  ]
+}

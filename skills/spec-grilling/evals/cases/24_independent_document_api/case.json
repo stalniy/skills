@@ -1,0 +1,26 @@
+{
+  "id": "24_independent_document_api",
+  "title": "Independent identifier and authorization decisions",
+  "expected_summary": "Surfaces identifier scope and private-document read authorization as two independent load-bearing decisions, keeping configurable details out of the frontier.",
+  "tags": [
+    "load-bearing",
+    "independent-frontier",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Stress-test SPEC.md. Show the decisions we need to settle first.",
+      "expected": {
+        "interactive_min": 2,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Surfaces both identifier scope and document read authorization as independent load-bearing issues.",
+        "Each recommendation states a concrete contract and explains strategic impact and change cost.",
+        "Keeps configurable timeouts and error wording out of the interactive frontier.",
+        "Waits for decisions before changing durable contracts in artifacts."
+      ]
+    }
+  ]
+}

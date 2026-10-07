@@ -1,0 +1,5 @@
+interface:
+  display_name: "Spec grilling"
+  short_description: "Stress-test and improve a specification by resolving load-bearing uncertainty first, then fixing lower-impact issues. Use when the user wants to review, refine, challenge, lint, or improve a spec before implementation."
+policy:
+  allow_implicit_invocation: false

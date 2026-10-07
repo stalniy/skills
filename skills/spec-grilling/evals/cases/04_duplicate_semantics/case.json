@@ -1,0 +1,24 @@
+{
+  "id": "04_duplicate_semantics",
+  "title": "Durable duplicate-request semantics is load-bearing",
+  "expected_summary": "Must raise duplicate semantics as load-bearing and recommend a concrete semantic such as returning the existing Order or a stable duplicate response. It must not ask an open-ended question.",
+  "tags": [
+    "load-bearing",
+    "domain-semantics",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Must raise duplicate semantics as load-bearing and recommend a concrete semantic such as returning the existing Order or a stable duplicate response. It must not ask an open-ended question.",
+        "Makes a concrete duplicate-request recommendation rather than asking the author an open-ended design question."
+      ]
+    }
+  ]
+}

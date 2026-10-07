@@ -1,0 +1,28 @@
+{
+  "id": "30_payment_retry_escalation",
+  "title": "Retry cleanup exposes duplicate-charge semantics",
+  "expected_summary": "Escalates missing payment identity and duplicate-charge guarantees as load-bearing before treating retry count as cleanup.",
+  "tags": [
+    "load-bearing",
+    "payment",
+    "cleanup-escalation",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Clean up the small omissions in SPEC.md. The retry count just needs a sensible default.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Recognizes payment identity and duplicate-charge semantics as load-bearing despite the user's framing as cleanup.",
+        "Pauses dependent cleanup and recommends an observable safe retry guarantee with both strategic impact and change cost explained.",
+        "Does not treat choosing a retry count as sufficient to make the specification ready.",
+        "Does not assert unsupported provider idempotency behavior or require a particular database/queue when a behavioral guarantee suffices.",
+        "Waits for acceptance before recording the new strategic guarantee as settled."
+      ]
+    }
+  ]
+}

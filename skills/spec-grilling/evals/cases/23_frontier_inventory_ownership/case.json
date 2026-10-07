@@ -1,0 +1,29 @@
+{
+  "id": "23_frontier_inventory_ownership",
+  "title": "Inventory ownership frontier and dependent reconciliation",
+  "expected_summary": "Surfaces authoritative inventory ownership as the first load-bearing decision, recommends a concrete owner, and defers reconciliation until ownership is settled.",
+  "tags": [
+    "load-bearing",
+    "ownership",
+    "frontier",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review SPEC.md before implementation. Apply changes once we agree on the strategic decisions.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Raises authoritative inventory ownership as a load-bearing issue and explains both strategic impact and later migration cost.",
+        "Gives a concrete supported recommendation instead of asking the user to design the system.",
+        "Defers the dependent reconciliation policy; does not bundle it into the ownership recommendation.",
+        "Does not ask the user to choose a dashboard refresh interval.",
+        "Does not write the proposed ownership decision into project artifacts before acceptance.",
+        "Offers accept, edit, and out-of-scope dispositions and an author lesson that applies to an unrelated specification rather than restating the inventory decision."
+      ]
+    }
+  ]
+}

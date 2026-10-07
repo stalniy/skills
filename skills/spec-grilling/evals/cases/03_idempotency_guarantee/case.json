@@ -1,0 +1,20 @@
+{
+  "id": "03_idempotency_guarantee",
+  "title": "Idempotency guarantee is load-bearing",
+  "expected_summary": "Must raise an interactive issue about the idempotency/duplicate-creation guarantee, with a concrete recommendation.",
+  "tags": [
+    "load-bearing",
+    "contract",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    }
+  ]
+}

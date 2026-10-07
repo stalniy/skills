@@ -1,0 +1,2 @@
+# Document API
+External clients store document identifiers permanently. The API team proposes tenant-scoped identifiers; the import team proposes globally unique identifiers. Neither contract has been accepted. Separately, the service stores private documents, but the spec does not define whether only owners or also tenant administrators may read them. This access policy is independent of identifier scope. Error-message wording and request timeouts are configurable.

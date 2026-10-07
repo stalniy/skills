@@ -1,0 +1,23 @@
+{
+  "id": "14_unknown_legal_fact",
+  "title": "Unknown legal requirement is not invented",
+  "expected_summary": "Must not invent the legal period. Must make the authoritative legal/compliance source explicit and keep the value parameterized.",
+  "tags": [
+    "unknown-fact",
+    "cleanup",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Must not invent the legal period. Must make the authoritative legal/compliance source explicit and keep the value parameterized.",
+        "Leaves the legal retention period parameterized with its authoritative source; does not invent a duration."
+      ]
+    }
+  ]
+}

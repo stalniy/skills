@@ -1,0 +1,23 @@
+{
+  "id": "09_retention_x",
+  "title": "Unknown retention X is parameterized",
+  "expected_summary": "Must not invent a retention value and must not make it interactive. It should represent the value as a parameter sourced from the compliance policy.",
+  "tags": [
+    "cleanup",
+    "unknown-fact",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Must not invent a retention value and must not make it interactive. It should represent the value as a parameter sourced from the compliance policy.",
+        "Leaves retention parameterized with the applicable compliance-policy authority; does not invent a duration."
+      ]
+    }
+  ]
+}

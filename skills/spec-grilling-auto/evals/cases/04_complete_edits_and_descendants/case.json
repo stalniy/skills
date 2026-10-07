@@ -1,0 +1,17 @@
+{
+  "id": "04_complete_edits_and_descendants",
+  "title": "Reconcile edits and invalidate descendants",
+  "expected_summary": "Accepts completed-batch edits, preserves independent decisions, recomputes affected descendants, and starts a new pending batch only after reconciliation.",
+  "tags": ["completed-batch", "dependency-graph", "selective-invalidation"],
+  "turns": [
+    {
+      "user": "Continue the automatic review of SPEC.md after my file edits.",
+      "assertions": [
+        "Runs diff -u; accepts edited S1 and its corrected assumption as authoritative, and batch-accepts untouched independent S3.",
+        "Invalidates only dependent S2, recomputes it under same-Job identity, and keeps its stable ID with status provisional.",
+        "Applies accepted knowledge to relevant artifacts, leaves S2 out of final knowledge, and does not start cleanup while S2 is provisional.",
+        "Starts a new pending batch only after reconciliation; its baseline and editable file are identical, and S3 remains accepted."
+      ]
+    }
+  ]
+}

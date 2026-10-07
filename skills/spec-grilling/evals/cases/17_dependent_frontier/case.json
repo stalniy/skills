@@ -1,0 +1,37 @@
+{
+  "id": "17_dependent_frontier",
+  "title": "Dependent load-bearing decision is deferred",
+  "expected_summary": "Turn 1 must present the Job/Attempt identity model first and defer idempotency-key scope if the correct scope depends on the identity decision. After the user accepts a same-Job recommendation, the next turn can surface the key-scope decision.",
+  "tags": [
+    "multi-turn",
+    "frontier",
+    "dependency",
+    "must-have",
+    "long-expensive"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "assertions": [
+        "Presents Job versus Attempt identity first and defers idempotency-key scope until identity is accepted."
+      ],
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 1
+      }
+    },
+    {
+      "user": "accept S1",
+      "prior_assistant_response": "S1 — Job identity. Recommend that a retry retain the same Job identity; an Attempt records each execution. The idempotency-key scope depends on this choice. accept · edit · out of scope",
+      "assertions": [
+        "Treats the same-Job identity recommendation as accepted and updates the specification.",
+        "Now raises idempotency-key scope as a separate load-bearing contract with a concrete recommendation and later change cost.",
+        "Does not start implementation."
+      ],
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    }
+  ]
+}

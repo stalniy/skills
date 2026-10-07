@@ -1,0 +1,34 @@
+{
+  "id": "28_edited_payment_state_decision",
+  "title": "Edited ownership decision is applied across artifacts",
+  "expected_summary": "Honors the user's edited Ledger ownership decision, updates the relevant artifacts, and handles refresh cadence as cleanup.",
+  "tags": [
+    "multi-turn",
+    "accepted-decision",
+    "cleanup",
+    "must-have",
+    "smoke"
+  ],
+  "history": [
+    {
+      "role": "assistant",
+      "content": "S1 — Payment-state ownership. A single owner is needed to prevent divergent payment states; changing ownership later requires migration. Recommendation: Checkout owns invoice payment state and Ledger mirrors it. accept · edit · out of scope"
+    }
+  ],
+  "turns": [
+    {
+      "user": "Edit S1: the ledger owns invoice payment state; checkout submits commands and reads ledger status. Accept that edited decision. Finish the review and update the relevant documents.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Applies ledger ownership, not the assistant's original checkout-ownership proposal.",
+        "Updates SPEC.md and CONTEXT.md with the accepted responsibilities.",
+        "Creates or updates an ADR with the accepted ownership decision and its reasons.",
+        "Uses and, if necessary, clarifies Invoice terminology consistently in GLOSSARY.md.",
+        "Ends SPEC.md with Out of scope and Cleanup summary sections in that order, using None for out of scope and recording the refresh-interval cleanup.",
+        "Cleans up the refresh interval autonomously and summarizes the decision and cleanup without starting implementation."
+      ]
+    }
+  ]
+}

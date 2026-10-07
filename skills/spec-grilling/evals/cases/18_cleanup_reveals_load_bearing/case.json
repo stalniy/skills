@@ -1,0 +1,24 @@
+{
+  "id": "18_cleanup_reveals_load_bearing",
+  "title": "Repository evidence elevates a decision to load-bearing",
+  "expected_summary": "Recognizes that queued is an established durable contract. Preserves it and explains the cost of the suggested rename, or raises a concrete rename/migration decision for acceptance; does not silently apply it as cleanup.",
+  "tags": [
+    "repository-evidence",
+    "load-bearing",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 1
+      },
+      "assertions": [
+        "Uses CONTEXT.md to recognize that literal status strings are persisted and consumed externally, so renaming them has compatibility and migration costs.",
+        "Either preserves queued with a clear explanation that pending is only a suggestion, or presents a concrete load-bearing rename/migration recommendation with accept, edit, and out of scope.",
+        "Does not rename queued to pending in artifacts without acceptance or invent an unrelated design issue."
+      ]
+    }
+  ]
+}

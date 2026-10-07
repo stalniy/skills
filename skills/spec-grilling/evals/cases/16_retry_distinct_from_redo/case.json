@@ -1,0 +1,23 @@
+{
+  "id": "16_retry_distinct_from_redo",
+  "title": "Technical retry remains distinct from domain redo",
+  "expected_summary": "Must preserve the distinction between Workflow `redo` and HTTP transport `retry`. It must not normalize all uses of retry to redo.",
+  "tags": [
+    "cleanup",
+    "ubiquitous-language",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Must preserve the distinction between Workflow `redo` and HTTP transport `retry`. It must not normalize all uses of retry to redo.",
+        "Preserves HTTP transport retry as distinct from Workflow redo; an explicit explanation of that distinction is allowed."
+      ]
+    }
+  ]
+}

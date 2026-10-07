@@ -1,0 +1,2 @@
+# Offline inventory
+Shops sell offline. The cloud and each shop keep stock counts. Authority is undecided. The reconnect conflict policy depends on authority. Separately, external clients store inventory IDs permanently; their scope is undecided. Dashboard refresh time is configurable.

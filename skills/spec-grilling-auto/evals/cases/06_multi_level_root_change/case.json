@@ -1,0 +1,16 @@
+{
+  "id": "06_multi_level_root_change",
+  "title": "Recompute a changed root and its branches",
+  "expected_summary": "Recomputes all transitive descendants of S1 and preserves independent S7 unchanged.",
+  "tags": ["dependency-graph", "transitive-invalidation", "stable-ids"],
+  "turns": [
+    {
+      "user": "Complete the review using my edit to S1. Recompute the affected decision tree.",
+      "assertions": [
+        "Accepts the S1 edit and recomputes S2 and S3 plus transitive descendants S4, S5, and S6 as provisional under their existing IDs.",
+        "Preserves independent S7 as accepted and unchanged without fresh grilling.",
+        "Starts a new pending batch with identical files only after processing the completed review."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "id": "12_reversible_business_default",
+  "title": "Important but reversible business default stays in cleanup",
+  "expected_summary": "Must recognize that the value may be important but is not load-bearing because it is easy to change. It should not invent an authoritative product policy if none exists.",
+  "tags": [
+    "cleanup",
+    "business-default",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Must recognize that the value may be important but is not load-bearing because it is easy to change. It should not invent an authoritative product policy if none exists.",
+        "Does not invent an authoritative product threshold or ask the author to choose a reversible default."
+      ]
+    }
+  ]
+}

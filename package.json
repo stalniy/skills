@@ -1,9 +1,13 @@
 {
   "name": "stalniy-skills",
   "version": "0.0.1",
+  "private": true,
+  "type":"module",
   "description": "Serhii Stotskyi's agent skills for modern engineering",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "eval:skills": "vitest run --config vitest.evals.config.ts .eval.ts",
+    "test:scripts": "vitest run --config vitest.evals.config.ts scripts/skill-evals",
+    "validate:types": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -12,9 +16,13 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "bugs": {
     "url": "https://github.com/stalniy/skills/issues"
   },
-  "homepage": "https://github.com/stalniy/skills#readme"
+  "homepage": "https://github.com/stalniy/skills#readme",
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "typescript": "^7.0.2",
+    "vitest-evals": "^0.17.0"
+  }
 }

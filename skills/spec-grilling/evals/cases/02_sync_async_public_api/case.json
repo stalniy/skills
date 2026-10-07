@@ -1,0 +1,20 @@
+{
+  "id": "02_sync_async_public_api",
+  "title": "Sync vs async public API is load-bearing",
+  "expected_summary": "Must classify sync vs async completion semantics as load-bearing because it is a durable external contract and expensive to change after client adoption.",
+  "tags": [
+    "load-bearing",
+    "contract",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    }
+  ]
+}

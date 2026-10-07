@@ -1,0 +1,19 @@
+{
+  "id": "22_clean_spec",
+  "title": "Complete specification stops without invented issues",
+  "expected_summary": "Must not invent an interactive load-bearing issue. It can state that no load-bearing uncertainty remains and avoid unnecessary redesign.",
+  "tags": [
+    "clean",
+    "stop-condition",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

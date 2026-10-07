@@ -1,0 +1,26 @@
+{
+  "id": "29_repository_deletion_conflict",
+  "title": "Implementation conflicts with accepted deletion contract",
+  "expected_summary": "Reports the durable mismatch between permanent deletion and the implementation's soft deletion without weakening the accepted public contract.",
+  "tags": [
+    "repository-evidence",
+    "contract-conflict",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review SPEC.md against the repository. Improve the spec before we implement the next version.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Inspects the implementation and reports the durable deletion-contract conflict.",
+        "Does not silently weaken permanent deletion into soft deletion just to match current code.",
+        "Uses Workspace for the domain concept while retaining SQL schema as a distinct technical concept.",
+        "Recommends a supported resolution while respecting the already accepted contract.",
+        "Does not implement deletion changes."
+      ]
+    }
+  ]
+}

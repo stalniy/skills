@@ -1,0 +1,27 @@
+{
+  "id": "26_unknown_archive_facts",
+  "title": "Repository facts resolve parameters without inventing policy",
+  "expected_summary": "Uses the repository's archive limit, leaves the externally controlled retention value unresolved, and distinguishes facts from strategic decisions.",
+  "tags": [
+    "cleanup",
+    "repository-evidence",
+    "unknown-fact",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review and clean up SPEC.md using the repository evidence.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Reads the supplied archive contract and incorporates or references its 500-event limit accurately.",
+        "Leaves retention parameterized with its policy authority and reports that the policy value is unavailable.",
+        "Does not invent a retention duration, claim legal compliance, or ask the user to supply a reversible setting already available in the repository.",
+        "Distinguishes explicit factual dependencies from unresolved strategic decisions.",
+        "Does not invent a retention duration. Mentioning an unsupported duration to explicitly reject it is allowed."
+      ]
+    }
+  ]
+}

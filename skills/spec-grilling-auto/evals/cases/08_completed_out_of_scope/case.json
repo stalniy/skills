@@ -1,0 +1,17 @@
+{
+  "id": "08_completed_out_of_scope",
+  "title": "Reconcile a bounded out-of-scope decision",
+  "expected_summary": "Preserves a valid out-of-scope boundary, records the deferral without accepting the proposed design, and cleans up once the review is settled.",
+  "tags": ["out-of-scope", "completed-batch", "cleanup"],
+  "turns": [
+    {
+      "user": "Continue the automatic review after my file edits.",
+      "assertions": [
+        "Runs diff -u, preserves S1 as out-of-scope with its reason and boundary, and does not accept the active-active proposal.",
+        "Records the deferred scope boundary in the specification and relevant context without writing the proposed recovery design as accepted.",
+        "If no provisional decisions remain, synchronizes both review files to an identical complete tree and proceeds to cleanup.",
+        "Emits a Cleanup summary after cleanup, including No cleanup changes were required. when appropriate."
+      ]
+    }
+  ]
+}

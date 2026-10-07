@@ -1,0 +1,20 @@
+{
+  "id": "05_concurrent_writers",
+  "title": "Concurrent writer model is load-bearing",
+  "expected_summary": "Must raise writer authority/concurrency model as load-bearing.",
+  "tags": [
+    "load-bearing",
+    "concurrency",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    }
+  ]
+}

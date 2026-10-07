@@ -1,0 +1,15 @@
+{
+  "id": "03_formatting_only_pending",
+  "title": "Ignore formatting-only review differences",
+  "expected_summary": "Treats wrapping and heading spacing as formatting, leaving the pending user file and baseline unchanged.",
+  "tags": ["pending-batch", "formatting", "preservation"],
+  "turns": [
+    {
+      "user": "Continue the automatic review of SPEC.md.",
+      "assertions": [
+        "Runs diff -u but treats line wrapping and heading spacing as formatting, not a new decision.",
+        "Leaves the edited review file and immutable baseline unchanged while pending; S1 remains provisional."
+      ]
+    }
+  ]
+}

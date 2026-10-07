@@ -1,0 +1,34 @@
+{
+  "id": "27_deferred_inventory_dependency",
+  "title": "Deferred ownership cannot block retained offline purchases",
+  "expected_summary": "Keeps ownership deferred as requested but recognizes retained offline purchases depend on it, requiring a boundary contract or renewed scope decision.",
+  "tags": [
+    "multi-turn",
+    "out-of-scope",
+    "dependency",
+    "must-have",
+    "smoke"
+  ],
+  "history": [
+    {
+      "role": "assistant",
+      "content": "S1 — Inventory ownership. Offline sales need an authoritative owner; changing it later requires data migration. Recommendation: make the cloud authoritative for inventory. accept · edit · out of scope"
+    }
+  ],
+  "turns": [
+    {
+      "user": "S1 is out of scope. Keep offline purchases in this release and finish the review.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Records ownership as deferred rather than accepted or resolved.",
+        "Recognizes that retained offline purchases depend on the deferred ownership decision.",
+        "Recommends a concrete boundary contract or explicitly explains why scope must change or the decision must return to scope.",
+        "Does not silently remove offline purchases against the user's instruction.",
+        "Does not declare the spec implementation-ready or start implementation while the dependency remains unresolved."
+      ]
+    }
+  ]
+}

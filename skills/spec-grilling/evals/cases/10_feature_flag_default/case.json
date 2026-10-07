@@ -1,0 +1,19 @@
+{
+  "id": "10_feature_flag_default",
+  "title": "Reversible feature-flag default stays in cleanup",
+  "expected_summary": "Must not treat the default as load-bearing. Agent may recommend a safe default during cleanup.",
+  "tags": [
+    "cleanup",
+    "reversible",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "05_multi_level_graph",
+  "title": "Recompute only a changed branch",
+  "expected_summary": "Recomputes only S2's descendants while retaining unrelated accepted decisions and stable IDs.",
+  "tags": ["dependency-graph", "selective-invalidation", "stable-ids"],
+  "turns": [
+    {
+      "user": "Complete the review using my edit to S2. Recompute only affected decisions.",
+      "assertions": [
+        "Accepts the S2 edit, recomputes S4 and S5 as provisional under their existing IDs, and preserves S1, S3, S6, and S7 as accepted without new grilling.",
+        "If a genuinely new issue is exposed, gives it a new ID instead of reusing an existing ID.",
+        "Starts a new pending batch with identical review files."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+interface:
+  display_name: "Spec grilling auto mode"
+  short_description: |
+    Review a specification automatically with provisional load-bearing decisions and a dependency-aware decision tree for later file review.
+    Use for unattended or automatic spec grilling, or when the user wants to edit a Markdown decision tree instead of resolving issues interactively.
+    For interactive accept/edit/out-of-scope review, use spec-grilling.
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,23 @@
+{
+  "id": "15_redo_terminology",
+  "title": "Ubiquitous term redo replaces synonym in cleanup",
+  "expected_summary": "Must normalize `reruns` to the ubiquitous term `redo` without creating an interactive load-bearing issue.",
+  "tags": [
+    "cleanup",
+    "ubiquitous-language",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Must normalize `reruns` to the ubiquitous term `redo` without creating an interactive load-bearing issue.",
+        "Normalizes equivalent rerun wording to redo without changing the resume point or reuse of earlier Results."
+      ]
+    }
+  ]
+}

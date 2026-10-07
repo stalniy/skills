@@ -1,0 +1,2 @@
+# Export status screen
+This internal screen reads the existing export API. An Export is an immutable downloadable snapshot. No new storage or public API is needed. Display snapshot status and export creation time. Refresh frequency is configurable but its default is unspecified. Use a configurable request timeout. Error copy is unspecified and is not a stable contract. Default sort order is unspecified and can change without migration.

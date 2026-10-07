@@ -1,0 +1,19 @@
+{
+  "id": "11_validation_message",
+  "title": "Validation message wording stays in cleanup",
+  "expected_summary": "Must not ask the author to choose exact wording. It can provide or leave a reasonable message during cleanup.",
+  "tags": [
+    "cleanup",
+    "observable",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

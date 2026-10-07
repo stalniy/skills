@@ -1,0 +1,19 @@
+{
+  "id": "07_configurable_timeout",
+  "title": "Configurable timeout stays in cleanup",
+  "expected_summary": "Must not create an interactive load-bearing issue. It can recommend a configuration parameter/default/source during cleanup.",
+  "tags": [
+    "cleanup",
+    "parameter",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

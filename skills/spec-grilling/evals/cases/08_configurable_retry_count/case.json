@@ -1,0 +1,19 @@
+{
+  "id": "08_configurable_retry_count",
+  "title": "Configurable retry count stays in cleanup",
+  "expected_summary": "Must not create an interactive load-bearing issue. Retry count should be handled as cleanup/configuration.",
+  "tags": [
+    "cleanup",
+    "parameter",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

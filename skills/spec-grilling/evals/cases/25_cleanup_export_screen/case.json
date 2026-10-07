@@ -1,0 +1,27 @@
+{
+  "id": "25_cleanup_export_screen",
+  "title": "Export screen cleanup with settled strategic decisions",
+  "expected_summary": "Completes reversible, observable specification cleanup without reopening accepted design or inventing architecture.",
+  "tags": [
+    "cleanup",
+    "reversible",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Refine SPEC.md and apply the changes. All strategic decisions are already accepted.",
+      "expected": {
+        "interactive_max": 0
+      },
+      "assertions": [
+        "Completes cleanup without asking for acceptance of refresh frequency, timeout, sort order, or error copy.",
+        "Applies reasonable observable requirements and explicitly configurable defaults to SPEC.md.",
+        "Normalizes snapshot to Export where it refers to the glossary concept, preserving established domain meaning.",
+        "Does not create a strategic ADR for reversible UI defaults or invent a new architecture.",
+        "Ends SPEC.md with Out of scope and Cleanup summary sections in that order; Out of scope says None and Cleanup summary lists the cleanup issues and resolutions.",
+        "Summarizes each cleanup issue and its resolution, including any resolved without an artifact edit if present, and gives proportionate author feedback; does not implement the screen."
+      ]
+    }
+  ]
+}

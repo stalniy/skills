@@ -1,0 +1,19 @@
+{
+  "id": "13_expensive_internal_partitioning",
+  "title": "Expensive internal choice without strategic effect is not interactive",
+  "expected_summary": "Must not make physical partitioning an interactive author decision merely because it is expensive. It may flag implementation risk outside the load-bearing frontier.",
+  "tags": [
+    "cleanup",
+    "low-strategic-high-cost",
+    "nice-to-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

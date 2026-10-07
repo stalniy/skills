@@ -1,0 +1,20 @@
+{
+  "id": "06_retention_permanent_vs_finite",
+  "title": "Permanent vs finite retention can be load-bearing",
+  "expected_summary": "Must classify permanent vs finite retention as load-bearing because it affects storage/deletion strategy and later migration cost.",
+  "tags": [
+    "load-bearing",
+    "retention",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      }
+    }
+  ]
+}

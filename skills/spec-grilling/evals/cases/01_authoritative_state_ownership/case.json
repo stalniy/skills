@@ -1,0 +1,24 @@
+{
+  "id": "01_authoritative_state_ownership",
+  "title": "Authoritative state ownership is load-bearing",
+  "expected_summary": "Must present an interactive load-bearing issue about authoritative state ownership/source of truth. The recommendation should choose one authoritative owner at the specification level, not a storage technology.",
+  "tags": [
+    "load-bearing",
+    "ownership",
+    "must-have",
+    "smoke"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill.",
+      "expected": {
+        "interactive_min": 1,
+        "interactive_max": 2
+      },
+      "assertions": [
+        "Must present an interactive load-bearing issue about authoritative state ownership/source of truth. The recommendation should choose one authoritative owner at the specification level, not a storage technology.",
+        "Does not require a storage technology or locking mechanism when an ownership contract suffices; mentioning a mechanism to reject it is allowed."
+      ]
+    }
+  ]
+}

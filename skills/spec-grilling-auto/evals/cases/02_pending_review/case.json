@@ -1,0 +1,16 @@
+{
+  "id": "02_pending_review",
+  "title": "Preserve an edited pending batch",
+  "expected_summary": "Detects a semantic edit but preserves both review files and does not accept decisions while the batch remains pending.",
+  "tags": ["pending-batch", "semantic-edit", "preservation"],
+  "turns": [
+    {
+      "user": "Continue the automatic review of SPEC.md.",
+      "assertions": [
+        "Runs diff -u and recognizes that the Decision edit is semantic, while preserving both files unchanged during pending review.",
+        "Does not accept the edited or untouched decision while review-status remains pending, and does not create a replacement batch.",
+        "Explains that the user completes the batch by changing only review-status in decision-tree.md."
+      ]
+    }
+  ]
+}

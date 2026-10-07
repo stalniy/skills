@@ -1,0 +1,38 @@
+{
+  "id": "21_boundary_isolates_deferred",
+  "title": "Boundary contract can isolate an out-of-scope concern",
+  "expected_summary": "Provider-internal regional failover should be allowed out of scope because the in-scope boundary contract isolates it.",
+  "tags": [
+    "multi-turn",
+    "out-of-scope",
+    "boundary",
+    "must-have",
+    "long-expensive"
+  ],
+  "turns": [
+    {
+      "user": "Review the specification with the spec-grilling skill. Treat provider-internal regional failover as an unresolved concern.",
+      "assertions": [
+        "Recognizes that the DeliveryProvider boundary isolates provider-internal regional failover from the application's accepted-or-rejected submission contract.",
+        "Does not raise provider-internal topology as an interactive load-bearing issue because the existing boundary already isolates it."
+      ],
+      "expected": {
+        "interactive_max": 0
+      }
+    },
+    {
+      "user": "out of scope S1",
+      "prompt": "Mark provider-internal regional failover out of scope and finish the review.",
+      "prior_assistant_response": "The DeliveryProvider boundary already isolates provider-internal regional failover. Its topology does not affect the accepted-or-rejected submission contract. No in-scope load-bearing decision is needed.",
+      "assertions": [
+        "Records provider-internal regional failover as out of scope without accepting an internal design.",
+        "Preserves the DeliveryProvider accepted-or-rejected boundary contract in the specification.",
+        "Ends the specification with Out of scope and Cleanup summary sections in that order, recording the deferred failover issue and its boundary.",
+        "Does not create a new in-scope failover dependency or start implementation."
+      ],
+      "expected": {
+        "interactive_max": 0
+      }
+    }
+  ]
+}

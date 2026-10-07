@@ -1,0 +1,16 @@
+{
+  "id": "09_settled_cleanup",
+  "title": "Clean up a settled specification",
+  "expected_summary": "Applies cleanup without inventing a strategic decision or opening a review batch, and reports the cleanup outcome.",
+  "tags": ["cleanup", "settled-spec", "no-new-batch"],
+  "turns": [
+    {
+      "user": "Continue automatic review and finish cleanup.",
+      "assertions": [
+        "Does not invent a pending batch or a new load-bearing decision for a reversible refresh default.",
+        "Applies base-skill cleanup, maintains the specification cleanup log, and emits a Cleanup summary stating what changed and why.",
+        "If cleanup reveals a genuinely load-bearing issue, stops cleanup and creates a new pending review batch instead."
+      ]
+    }
+  ]
+}
