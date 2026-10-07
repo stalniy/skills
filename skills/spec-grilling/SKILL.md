@@ -217,7 +217,7 @@ Do not simplify established domain terms away.
 
 ## Decision graph artifact
 
-Before discovery or graph changes, read [`../references/decision-graph.md`](../references/decision-graph.md). It is the authority for artifact location, metadata, node structure, statuses, provenance, dependency semantics, and changes. Maintain `decision-graph.ai.md` as the durable input for later complexity reduction.
+Before discovery or graph changes, read [`references/decision-graph.md`](references/decision-graph.md). It is the authority for artifact location, metadata, node structure, statuses, provenance, dependency semantics, and changes. Maintain `decision-graph.ai.md` as the durable input for later complexity reduction.
 
 Before discovery, read any existing graph and reconcile it with the current specification and project evidence. Record relevant settled load-bearing decisions without reopening them merely to populate the graph.
 

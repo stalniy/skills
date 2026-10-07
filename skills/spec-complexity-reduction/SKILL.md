@@ -15,7 +15,7 @@ The agent owns the recommendation. The user owns scope and veto.
 
 ## Inputs and authority
 
-Before consuming or changing a graph, read [`../references/decision-graph.md`](../references/decision-graph.md) for the shared artifact contract.
+Before consuming or changing a graph, read [`references/decision-graph.md`](references/decision-graph.md) for the shared artifact contract.
 
 Read the specification, complete decision graph, and relevant project evidence. Inspect code, tests, ADRs, configuration, `CONTEXT.md`, and `GLOSSARY.md` where they establish constraints or explain a hotspot. Use established domain terms consistently.
 

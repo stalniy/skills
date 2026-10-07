@@ -2,7 +2,7 @@
 
 These are behavioral scenarios for manual or future harness evaluation. This skill has no automated behavioral runner yet. Packaging validation does not establish semantic correctness.
 
-For each scenario, supply the skill, a specification, a graph using the shared `../../references/decision-graph.md` contract, and the stated project evidence in an isolated workspace. Invoke the skill to reduce accidental complexity. Evaluate the response and actual file changes against the assertions below, rather than matching particular wording. Do not supply expected outcomes to the candidate.
+For each scenario, supply the skill, a specification, a graph using the shared `../references/decision-graph.md` contract, and the stated project evidence in an isolated workspace. Invoke the skill to reduce accidental complexity. Evaluate the response and actual file changes against the assertions below, rather than matching particular wording. Do not supply expected outcomes to the candidate.
 
 ## Local redo
 

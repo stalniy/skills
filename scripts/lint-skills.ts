@@ -92,15 +92,30 @@ function markdownFiles(dir: string): string[] {
 
 function checkLinks(file: string) {
   const text = readFileSync(file, "utf8").replace(/```[\s\S]*?```/g, "");
-  for (const match of text.matchAll(/(?<!!)\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
-    const target = match[1]!.split("#")[0]!;
-    if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) continue;
+  const check = (raw: string, kind: string) => {
+    const target = raw.split("#")[0]!;
+    if (!target || /^[a-z][a-z0-9+.-]*:/i.test(target)) return;
     const resolved = resolve(dirname(file), decodeURI(target));
     if (resolved !== skillsDir && !resolved.startsWith(skillsDir + sep)) {
-      fail(file, `link escapes skills directory: ${match[1]}`);
+      fail(file, `${kind} escapes skills directory: ${raw}`);
     } else if (!existsSync(resolved)) {
-      fail(file, `broken reference: ${match[1]}`);
+      fail(file, `broken ${kind}: ${raw}`);
     }
+  };
+
+  const linkRe = /(?<!!)\[([^\]]*)\]\(<?([^)\s>]+)>?(?:\s+"[^"]*")?\)/g;
+  for (const match of text.matchAll(linkRe)) {
+    const label = /^`([^`]+)`$/.exec(match[1]!)?.[1];
+    if (label && label !== match[2]) {
+      fail(file, `link text \`${label}\` does not match target ${match[2]}`);
+    }
+    check(match[2]!, "reference");
+  }
+
+  // Inline-code paths outside links that point into the skill tree.
+  const pathRe = /`((?:\.{1,2}\/|references\/|agents\/|scripts\/|assets\/)[^`\s]+)`/g;
+  for (const match of text.replace(linkRe, "").matchAll(pathRe)) {
+    check(match[1]!, "path reference");
   }
 }
 
