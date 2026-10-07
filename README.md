@@ -11,6 +11,10 @@ Agent skills for reviewing and improving software specifications.
 
 ## Use
 
+```sh
+npx skills add stalniy/skills
+```
+
 Copy or link the desired skill directory into the skills location supported by your agent. Keep the full directory so its supporting files and evaluation fixtures remain available. Also keep `skills/references/` as a sibling of the installed skill directories; all graph producers and consumers read its [decision graph contract](skills/references/decision-graph.md).
 
 ## Development
