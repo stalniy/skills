@@ -7,7 +7,9 @@
   "scripts": {
     "eval:skills": "vitest run --config vitest.evals.config.ts .eval.ts",
     "test:scripts": "vitest run --config vitest.evals.config.ts scripts/skill-evals",
-    "validate:types": "tsc --noEmit"
+    "validate:types": "tsc --noEmit",
+    "lint:skills": "node --experimental-strip-types scripts/lint-skills.ts",
+    "lint:secrets": "secretlint \"**/*\""
   },
   "repository": {
     "type": "git",
@@ -21,8 +23,12 @@
   },
   "homepage": "https://github.com/stalniy/skills#readme",
   "devDependencies": {
+    "@secretlint/secretlint-rule-preset-recommend": "^13.0.6",
     "@types/node": "^26.6.3",
+    "secretlint": "^13.0.6",
     "typescript": "^7.0.2",
-    "vitest-evals": "^0.17.0"
+    "vitest-evals": "^0.17.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.5"
   }
 }
