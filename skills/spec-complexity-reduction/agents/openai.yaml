@@ -1,0 +1,5 @@
+interface:
+  display_name: "Complexity Reduction"
+  short_description: "Simplify designs while preserving required semantics"
+policy:
+  allow_implicit_invocation: false
