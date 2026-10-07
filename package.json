@@ -1,8 +1,8 @@
 {
   "name": "stalniy-skills",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
-  "type":"module",
+  "type": "module",
   "description": "Serhii Stotskyi's agent skills for modern engineering",
   "scripts": {
     "eval:skills": "vitest run --config vitest.evals.config.ts .eval.ts",
