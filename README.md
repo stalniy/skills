@@ -5,12 +5,9 @@ Agent skills for reviewing and improving software specifications.
 ## Skills
 
 - **spec-grilling** (`skills/spec-grilling`): Interactive review that resolves high-impact, costly-to-change decisions with the author, then handles lower-impact by itself.
-- **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision graph for later review.
+- **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision graph for later review. Built on policies from **spec-grilling**.
+- **spec-complexity-reduction** (`skills/spec-complexity-reduction`): Simplify accidental complexity in a decision graph while preserving required semantics and accepted decisions. Run on a working draft before human review; automatic pipeline integration is not yet wired. **Depends on** created desion-graph.md by either spec-grilling or spec-grilling-auto
 
-
-Each skill is defined by its `SKILL.md`. Both modes store `.spec-grill/<spec-slug>/decision-graph.ai.md` for downstream complexity reduction. The automatic mode also maintains the user-editable `decision-graph.md`.
-
-The automatic skill builds on the policies in `spec-grilling/SKILL.md`.
 
 ## Use
 
