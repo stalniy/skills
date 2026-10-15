@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/stalniy/skills/compare/v0.0.3...v0.0.4) (2026-10-15)
+
+
+### Bug Fixes
+
+* adds architectural invariants ([2ceaa4f](https://github.com/stalniy/skills/commit/2ceaa4f1f45978be6d41f0c165b68518512a1eef))
+
 ## [0.0.3](https://github.com/stalniy/skills/compare/v0.0.2...v0.0.3) (2026-10-07)
 
 
