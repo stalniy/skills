@@ -123,7 +123,7 @@ Prefer the smallest sufficient change.
 
 Fix the specification at the highest level necessary to remove ambiguity and contradictions, reduce uncertainty, and make missing information explicit.
 
-Do not select an implementation mechanism when a behavioral guarantee is sufficient.
+Prefer behavioral guarantees for local implementation choices. Preserve explicit architectural constraints when behavior alone cannot express required ownership, reuse, or extension points.
 
 ## Out of scope
 
@@ -280,6 +280,32 @@ A preference is not a defect.
 Raise an interactive issue only when both load-bearing conditions are present.
 
 Resolve lower-impact choices yourself when a reasonable recommendation does not constrain a strategic, hard-to-reverse decision.
+
+## Architectural invariants
+
+Identify the existing abstractions the feature extends. Determine which
+behavior they own and which details implementations may vary.
+
+Preserve established ownership in the specification:
+- Shared semantics remain in the shared implementation.
+- Implementation-specific mechanics belong behind its extension interface.
+- When that interface lacks required information, consider extending it
+  before introducing a parallel implementation of shared behavior.
+
+For each proposed exception, identify the actual semantic difference.
+Different data, encoding, rendering, or metadata does not by itself
+establish different semantics.
+
+State important reuse and ownership constraints explicitly. Behavioral
+equivalence alone is insufficient when the architecture requires one
+shared implementation.
+
+Before completion, ask:
+“Could an implementer satisfy every behavioral requirement while
+bypassing the intended abstraction or duplicating its responsibilities?”
+
+If yes, resolve the ambiguity using project evidence or raise it as
+a load-bearing issue when it meets both load-bearing tests.
 
 ## Author learning
 
