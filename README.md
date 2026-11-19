@@ -6,6 +6,7 @@ Agent skills for reviewing and improving software specifications.
 
 - **spec-grilling** (`skills/spec-grilling`): Interactive review that resolves high-impact, costly-to-change decisions with the author, then handles lower-impact by itself.
 - **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision graph for later review. Built on policies from **spec-grilling**.
+- **spec-learning** (`skills/spec-learning`): Separate feedback on specification-writing habits, grounded in the original draft, review findings, and author responses. Use after either grilling mode or another spec review; the review skills do not run it automatically.
 - **spec-complexity-reduction** (`skills/spec-complexity-reduction`): Simplify accidental complexity in a decision graph while preserving required semantics and accepted decisions. Run on a working draft before human review; automatic pipeline integration is not yet wired. **Depends on** created desion-graph.md by either spec-grilling or spec-grilling-auto
 
 
