@@ -1,0 +1,3 @@
+interface:
+  display_name: "Spec review"
+  short_description: "Verify a specification for contradictions, ambiguity, and gaps, and recommend Quint, TLA+, or Lean checks"
