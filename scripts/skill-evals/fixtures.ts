@@ -33,12 +33,11 @@ export async function prepareCase({ input, skillPath, runnerPromptPath }: {
     readFile(skillPath, "utf8"),
     readFile(runnerPromptPath ?? DEFAULT_RUNNER_PROMPT_PATH, "utf8")
   ]);
-  if (skill.includes("../references/decision-graph.md")) {
-    await mkdir(join(workspace, "references"), { recursive: true });
-    await cp(
-      join(dirname(skillPath), "../references/decision-graph.md"),
-      join(workspace, "references/decision-graph.md")
-    );
+  const graphReference = "references/decision-graph.md";
+  if (skill.includes(graphReference)) {
+    const destination = join(workspace, "skill", graphReference);
+    await mkdir(dirname(destination), { recursive: true });
+    await cp(join(dirname(skillPath), graphReference), destination);
   }
   await writeFile(join(workspace, "skill/SKILL.md"), skill);
   await writeFile(join(workspace, "TASK.md"), taskPrompt(input, skill, template));

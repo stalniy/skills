@@ -22,7 +22,7 @@
         "Defers the dependent reconciliation policy; does not bundle it into the ownership recommendation.",
         "Does not ask the user to choose a dashboard refresh interval.",
         "Does not write the proposed ownership decision into project artifacts before acceptance.",
-        "Offers accept, edit, and out-of-scope dispositions and an author lesson that applies to an unrelated specification rather than restating the inventory decision."
+        "Offers accept, edit, and out-of-scope dispositions."
       ]
     }
   ]

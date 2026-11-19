@@ -55,6 +55,6 @@ Changing `S2` in `S1 → S2 → S4` and `S1 → S3 → S6` recomputes `S4` and p
 
 ## Reporting
 
-After each invocation, state the review status and the next file action. Link `decision-graph.ai.md` as the input for downstream complexity reduction. A pending baseline remains immutable; reduction must not rewrite it during human review. Summarize newly accepted or changed load-bearing decisions. If provisional nodes remain, give their count and link to `decision-graph.md`. Summarize newly deferred concerns and boundaries, and unresolved factual dependencies when present. Follow the base skill for author feedback.
+After each invocation, state the review status and the next file action. Link `decision-graph.ai.md` as the input for downstream complexity reduction. A pending baseline remains immutable; reduction must not rewrite it during human review. Summarize newly accepted or changed load-bearing decisions. If provisional nodes remain, give their count and link to `decision-graph.md`. Summarize newly deferred concerns and boundaries, and unresolved factual dependencies when present.
 
 After cleanup runs, always include **Cleanup summary** in the response. For each cleanup change, state what changed and why. If none was needed, say `No cleanup changes were required.` Maintain the base skill's cleanup record in the specification as well.
