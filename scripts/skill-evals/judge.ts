@@ -5,10 +5,11 @@ import { tmpdir } from "node:os";
 import { createJudgeHarness as createEvalJudgeHarness } from "vitest-evals";
 import type { JudgeHarness, JudgeHarnessInput, JudgeResult, RunJudge } from "vitest-evals";
 import { runCodex } from "./harness/codex.ts";
+import { runCopilot } from "./harness/copilot.ts";
 import { runPi } from "./harness/pi.ts";
 import { recordTiming } from "./timing.ts";
 
-type JudgeSession = { workspace: string; sessionDir: string; codexHome: string; artifactsRoot?: string; threadId?: string; firstPrompt?: string };
+type JudgeSession = { workspace: string; sessionDir: string; codexHome: string; copilotHome: string; artifactsRoot?: string; threadId?: string; firstPrompt?: string };
 const judgeSessions = new AsyncLocalStorage<JudgeSession>();
 
 // Owns the judge's workspace and saved session; both are deleted when the judge finishes.
@@ -16,6 +17,7 @@ async function withJudgeSession<T>(fn: () => Promise<T>, artifactsRoot?: string)
   const root = await mkdtemp(join(tmpdir(), "skill-judge-"));
   const session: JudgeSession = {
     workspace: join(root, "workspace"), sessionDir: join(root, "sessions"), codexHome: join(root, "codex-home"),
+    copilotHome: join(root, "copilot-home"),
     artifactsRoot,
   };
   await mkdir(session.workspace);
@@ -37,9 +39,9 @@ export const createJudgeHarness = (options: JudgeOptions): JudgeHarness => creat
   },
 });
 export interface JudgeOptions {
-  harness: "pi" | "codex";
+  harness: "pi" | "codex" | "copilot";
   model: string;
-  thinking?: "minimal" | "low" | "medium" | "high" | "xhigh";
+  thinking?: string;
 }
 
 async function judgeTurn(session: JudgeSession, input: JudgeHarnessInput & JudgeOptions, signal?: AbortSignal) {
@@ -65,6 +67,14 @@ async function judgeTurn(session: JudgeSession, input: JudgeHarnessInput & Judge
       ...config,
       session: { dir: session.sessionDir, resume },
     });
+    if (input.harness === "copilot") {
+      const result = await runCopilot({
+        ...config,
+        session: { home: session.copilotHome, sessionId: session.threadId },
+      });
+      if (result.sessionId) session.threadId = result.sessionId;
+      return result;
+    }
     const result = await runCodex({
       ...config,
       schema: input.responseFormat?.schema,

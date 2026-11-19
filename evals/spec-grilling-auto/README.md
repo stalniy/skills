@@ -18,4 +18,10 @@ The nine cases cover:
 
 For base-policy regression, reuse the cases in `../spec-grilling/cases/` with expectations adapted to provisional file review. Preserve coverage of strategic impact and change cost, evidence, scope semantics, unknown facts, language, knowledge artifacts, and cleanup thresholds.
 
-This checkout does not provide an automatic-review eval runner. Run the cases with a behavioral runner that loads `../../skills/spec-grilling-auto/SKILL.md` and `../../skills/spec-grilling/SKILL.md`, supplies the files under `input/`, and checks the response and resulting files against every assertion. Fixture/schema checks alone do not establish model behavior.
+Run the automated behavioral suite with:
+
+```sh
+npx vitest run --config vitest.evals.config.ts evals/spec-grilling-auto/spec-grilling-auto.eval.ts
+```
+
+The runner loads `../../skills/spec-grilling-auto/SKILL.md` and `../../skills/spec-grilling/SKILL.md`, supplies the files under `input/`, and checks the response and resulting files against the assertions. It supports the same Pi, Codex, and Copilot CLI configuration described in [the spec-grilling eval README](../spec-grilling/README.md). Live evals consume model usage; fixture/schema checks alone do not establish model behavior.

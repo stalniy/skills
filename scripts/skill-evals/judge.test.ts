@@ -5,11 +5,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runJudgeHarness } from "vitest-evals";
 import type { RunJudge } from "vitest-evals";
 import { runCodex } from "./harness/codex.ts";
+import { runCopilot } from "./harness/copilot.ts";
 import { runPi } from "./harness/pi.ts";
 import { gradeWithRepair, createJudgeHarness } from "./judge.ts";
 import { gradeVerdict } from "./rubric.ts";
 
 vi.mock("./harness/codex.ts", () => ({ runCodex: vi.fn() }));
+vi.mock("./harness/copilot.ts", () => ({ runCopilot: vi.fn() }));
 vi.mock("./harness/pi.ts", () => ({ runPi: vi.fn() }));
 
 let artifacts: string;
@@ -109,6 +111,7 @@ it("isolates concurrent judge sessions", async () => {
     await Promise.resolve();
     return result(JSON.stringify({ assertions: [assertion(0)] }));
   });
+
   await Promise.all(["First evidence", "Second evidence"].map(prompt => gradeWithRepair(
     input => runJudgeHarness(createJudgeHarness({ harness: "pi", model: MODEL }), input), { prompt },
     verdict => gradeVerdict(verdict, ["A"]),
@@ -117,4 +120,25 @@ it("isolates concurrent judge sessions", async () => {
   expect(new Set(calls.map(call => call.workspace)).size).toBe(2);
   expect(calls.map(call => call.session?.resume)).toEqual([false, false]);
   for (const call of calls) await expect(access(call.workspace)).rejects.toMatchObject({ code: "ENOENT" });
+});
+
+it("resumes the Copilot judge session across JSON and verdict repairs", async () => {
+  const runner = vi.mocked(runCopilot);
+  const sessionId = "copilot-session";
+  runner.mockResolvedValueOnce({ ...result("invalid JSON"), sessionId });
+  runner.mockResolvedValueOnce({ ...result(JSON.stringify({ assertions: [assertion(0)] })), sessionId });
+  runner.mockResolvedValueOnce({ ...result(JSON.stringify({ assertions: [assertion(0), assertion(1, "fail")] })), sessionId });
+  const runJudge: RunJudge = input => runJudgeHarness(
+    createJudgeHarness({ harness: "copilot", model: "gpt-5.3-codex" }), input,
+  );
+  const grade = await gradeWithRepair(runJudge, { system: "Instructions", prompt: "Original evidence" },
+    verdict => gradeVerdict(verdict, ["A", "B"]));
+  expect(grade.score).toBe(0);
+  const calls = runner.mock.calls.map(([options]) => options);
+  expect(calls.map(call => call.session?.sessionId)).toEqual([undefined, sessionId, sessionId]);
+  expect(new Set(calls.map(call => call.session?.home)).size).toBe(1);
+  expect(calls[0]!.prompt).toContain("Original evidence");
+  expect(calls[1]!.prompt).not.toContain("Original evidence");
+  expect(calls[2]!.prompt).toContain("exactly one verdict");
+  await expect(access(calls[0]!.workspace)).rejects.toMatchObject({ code: "ENOENT" });
 });

@@ -24,7 +24,7 @@ export async function runCodex(options: {
   artifacts: string;
   sandbox: "workspace-write" | "read-only";
   model?: string;
-  thinking?: "minimal" | "low" | "medium" | "high" | "xhigh";
+  thinking?: string;
   schema?: unknown;
   session?: { home: string; threadId?: string };
   signal?: AbortSignal;

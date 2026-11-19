@@ -4,6 +4,7 @@ import { expect } from "vitest";
 import { createJudge, describeEval, toJsonValue } from "vitest-evals";
 import { z } from "zod";
 import { deterministicScore } from "../../scripts/skill-evals/deterministic.ts";
+import { evalConfigSchema } from "../../scripts/skill-evals/config.ts";
 import { continueConversation } from "../../scripts/skill-evals/conversation.ts";
 import type { DeterministicExpectation } from "../../scripts/skill-evals/deterministic.ts";
 import type { CandidateInput, SkillCase } from "../../scripts/skill-evals/fixtures.ts";
@@ -12,17 +13,7 @@ import type { SkillOutput } from "../../scripts/skill-evals/harness.ts";
 import { gradeWithRepair, createJudgeHarness } from "../../scripts/skill-evals/judge.ts";
 import { specGrillingVerdictSchema, gradeSpecGrillingVerdict } from "./rubric.ts";
 
-const harnessSchema = z.enum(['pi', 'codex']);
-const configSchema = z.object({
-  SKILL_HARNESS: harnessSchema.default('pi'),
-  SKILL_MODEL: z.string().default('openrouter/deepseek/deepseek-v4.1-flash'),
-  SKILL_MODEL_THINKING: z.string().default("medium"),
-  SKILL_RUN_DIR: z.string().optional(),
-  JUDGE_HARNESS: harnessSchema.default("codex"),
-  JUDGE_MODEL: z.string().default("gpt-6-sol"),
-  JUDGE_MODEL_THINKING: z.string().default('medium')
-});
-const EVAL_CONFIG = configSchema.parse(process.env);
+const EVAL_CONFIG = evalConfigSchema("medium").parse(process.env);
 
 const generatedExpectations = new Map<string, DeterministicExpectation>();
 const conversations = new Map<string, GeneratedTurn[]>();
@@ -31,14 +22,14 @@ const generatedRubric = await readFile(join(import.meta.dirname, "./JUDGE_RUBRIC
 const harness = skillHarness({
   harness: EVAL_CONFIG.SKILL_HARNESS,
   model: EVAL_CONFIG.SKILL_MODEL,
-  thinking: EVAL_CONFIG.SKILL_MODEL_THINKING as 'medium',
+  thinking: EVAL_CONFIG.SKILL_MODEL_THINKING,
   runDir: EVAL_CONFIG.SKILL_RUN_DIR,
   skillPath: join(import.meta.dirname, "../../skills/spec-grilling/SKILL.md"),
 });
 const judgeHarness = createJudgeHarness({
   harness: EVAL_CONFIG.JUDGE_HARNESS,
   model: EVAL_CONFIG.JUDGE_MODEL,
-  thinking: EVAL_CONFIG.JUDGE_MODEL_THINKING as 'high',
+  thinking: EVAL_CONFIG.JUDGE_MODEL_THINKING,
 });
 
 describeEval("spec-grilling", { harness, judgeHarness }, (it) => {

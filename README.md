@@ -29,10 +29,10 @@ npm run validate:types
 npm run test:scripts
 ```
 
-The `spec-grilling` behavioral evals use Pi or Codex harnesses and invoke language models, so they require the corresponding CLI and model access. Run them with:
+The behavioral evals use Pi, Codex, or GitHub Copilot CLI harnesses and invoke language models, so they require the corresponding CLI and model access. Run them with:
 
 ```sh
 npm run eval:skills
 ```
 
-The `evals/spec-grilling-auto` directory currently contains eval scenarios and documentation, but does not have an automated eval runner. See `evals/<skill>/README.md` for details.
+See `evals/<skill>/README.md` for configuration and scenario details.
