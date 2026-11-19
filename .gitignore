@@ -149,3 +149,5 @@ vite.config.ts.timestamp-*
 .turbo
 .eval-results
 .DS_Store
+
+.learn
