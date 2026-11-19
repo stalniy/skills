@@ -16,5 +16,5 @@
     "allowImportingTsExtensions": true,
     "rootDir": "."
   },
-  "include": ["./scripts/**/*.ts", "skills/**/*.ts"]
+  "include": ["./scripts/**/*.ts", "evals/**/*.ts"]
 }

@@ -6,11 +6,11 @@ The suite contains 31 scenarios and 35 eval tests. Four scenarios have an isolat
 
 - `cases/<case>/input/` contains repository evidence, including nested paths.
 - `cases/<case>/case.json` contains user turns, conversation history, and expected behavior.
-- `../../../scripts/skill-evals/prompts/RUNNER_PROMPT.md` renders the current skill, evidence, history, and latest user turn.
+- `../../scripts/skill-evals/prompts/RUNNER_PROMPT.md` renders the current skill, evidence, history, and latest user turn.
 - `JUDGE_RUBRIC.md` defines the semantic grading dimensions and assertion verdict format.
 - `rubric.ts` enforces the schema and computes the pass rule.
 
-The runner reads the current `../SKILL.md`. Assertions are withheld from the candidate and supplied to the judge.
+The runner reads the current `../../skills/spec-grilling/SKILL.md`. Assertions are withheld from the candidate and supplied to the judge.
 
 ## Run
 
@@ -19,8 +19,8 @@ From the repository root:
 ```sh
 npm run validate:types
 npm run test:scripts
-npx vitest run --config vitest.evals.config.ts skills/spec-grilling/evals/spec-grilling.eval.ts -t '01-authoritative-state-ownership$'
-npx vitest run --config vitest.evals.config.ts skills/spec-grilling/evals/spec-grilling.eval.ts
+npx vitest run --config vitest.evals.config.ts evals/spec-grilling/spec-grilling.eval.ts -t '01-authoritative-state-ownership$'
+npx vitest run --config vitest.evals.config.ts evals/spec-grilling/spec-grilling.eval.ts
 ```
 
 Live evals require the selected CLI and authenticated model access. Configure `SKILL_HARNESS` and `JUDGE_HARNESS` as `pi` or `codex`, with `SKILL_MODEL`, `JUDGE_MODEL`, `SKILL_MODEL_THINKING`, and `JUDGE_MODEL_THINKING`. See the runner for defaults. Live runs consume model usage. Repeat the same command three times with fixed model settings when comparing skill versions.

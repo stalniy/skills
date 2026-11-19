@@ -16,6 +16,6 @@ The nine cases cover:
 | `08_completed_out_of_scope` | Preserve a valid out-of-scope boundary without accepting its proposed design |
 | `09_settled_cleanup` | Clean up settled specifications without inventing another review batch |
 
-For base-policy regression, reuse the cases in `../../spec-grilling/evals/cases/` with expectations adapted to provisional file review. Preserve coverage of strategic impact and change cost, evidence, scope semantics, unknown facts, language, knowledge artifacts, and cleanup thresholds.
+For base-policy regression, reuse the cases in `../spec-grilling/cases/` with expectations adapted to provisional file review. Preserve coverage of strategic impact and change cost, evidence, scope semantics, unknown facts, language, knowledge artifacts, and cleanup thresholds.
 
-This checkout does not provide an automatic-review eval runner. Run the cases with a behavioral runner that loads `../SKILL.md` and its sibling `../../spec-grilling/SKILL.md`, supplies the files under `input/`, and checks the response and resulting files against every assertion. Fixture/schema checks alone do not establish model behavior.
+This checkout does not provide an automatic-review eval runner. Run the cases with a behavioral runner that loads `../../skills/spec-grilling-auto/SKILL.md` and `../../skills/spec-grilling/SKILL.md`, supplies the files under `input/`, and checks the response and resulting files against every assertion. Fixture/schema checks alone do not establish model behavior.
