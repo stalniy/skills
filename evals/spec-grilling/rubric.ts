@@ -1,6 +1,6 @@
 import type { JudgeResult } from "vitest-evals";
 import { z } from "zod";
-import { gradeVerdict, verdictSchema } from "../../../scripts/skill-evals/rubric.ts";
+import { gradeVerdict, verdictSchema } from "../../scripts/skill-evals/rubric.ts";
 
 const requiredScore = z.union([z.literal(0), z.literal(1), z.literal(2)]);
 const optionalScore = z.union([requiredScore, z.literal("N/A")]);

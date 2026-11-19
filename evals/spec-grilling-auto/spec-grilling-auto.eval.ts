@@ -3,11 +3,11 @@ import { join, relative } from "node:path";
 import { expect } from "vitest";
 import { createJudge, describeEval, toJsonValue } from "vitest-evals";
 import { z } from "zod";
-import type { CandidateInput, SkillCase } from "../../../scripts/skill-evals/fixtures.ts";
-import { skillHarness } from "../../../scripts/skill-evals/harness.ts";
-import type { SkillOutput } from "../../../scripts/skill-evals/harness.ts";
-import { gradeWithRepair, createJudgeHarness } from "../../../scripts/skill-evals/judge.ts";
-import { gradeVerdict, verdictSchema } from "../../../scripts/skill-evals/rubric.ts";
+import type { CandidateInput, SkillCase } from "../../scripts/skill-evals/fixtures.ts";
+import { skillHarness } from "../../scripts/skill-evals/harness.ts";
+import type { SkillOutput } from "../../scripts/skill-evals/harness.ts";
+import { gradeWithRepair, createJudgeHarness } from "../../scripts/skill-evals/judge.ts";
+import { gradeVerdict, verdictSchema } from "../../scripts/skill-evals/rubric.ts";
 
 const harnessSchema = z.enum(["pi", "codex"]);
 const configSchema = z.object({
@@ -28,7 +28,7 @@ const harness = skillHarness({
   model: EVAL_CONFIG.SKILL_MODEL,
   thinking: EVAL_CONFIG.SKILL_MODEL_THINKING as "medium",
   runDir: EVAL_CONFIG.SKILL_RUN_DIR,
-  skillPath: join(import.meta.dirname, "../SKILL.md"),
+  skillPath: join(import.meta.dirname, "../../skills/spec-grilling-auto/SKILL.md"),
 });
 const judgeHarness = createJudgeHarness({
   harness: EVAL_CONFIG.JUDGE_HARNESS,
@@ -90,7 +90,7 @@ interface GeneratedCase {
 
 async function generatedCases(testCasesRoot: string): Promise<SkillCase[]> {
   const caseDirectories = await Array.fromAsync(glob(`${testCasesRoot}/*`));
-  const baseSkill = await readFile(join(import.meta.dirname, "../../spec-grilling/SKILL.md"), "utf8");
+  const baseSkill = await readFile(join(import.meta.dirname, "../../skills/spec-grilling/SKILL.md"), "utf8");
   const cases: SkillCase[] = [];
 
   await Promise.all(caseDirectories.sort().map(async (root) => {

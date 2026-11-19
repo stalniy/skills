@@ -27,7 +27,7 @@ export default defineConfig({
         description: 'Evals that are nice to suceed but not a core part of functionality.',
       },
     ],
-    include: ["skills/**/*.eval.ts", "scripts/skill-evals/*.test.ts"],
+    include: ["evals/**/*.eval.ts", "scripts/skill-evals/*.test.ts"],
     testTimeout: 540_000,
     fileParallelism: false,
     maxWorkers: 1,

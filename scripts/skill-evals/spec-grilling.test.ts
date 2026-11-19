@@ -1,14 +1,14 @@
 import { readFile, readdir, rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
-import { gradeSpecGrillingVerdict, specGrillingVerdictSchema } from "../../skills/spec-grilling/evals/rubric.ts";
+import { gradeSpecGrillingVerdict, specGrillingVerdictSchema } from "../../evals/spec-grilling/rubric.ts";
 import { continueConversation } from "./conversation.ts";
 import { deterministicScore } from "./deterministic.ts";
 import { prepareCase, snapshot } from "./fixtures.ts";
 import type { CandidateInput } from "./fixtures.ts";
 import type { SkillOutput } from "./harness.ts";
 
-const evalRoot = resolve("skills/spec-grilling/evals");
+const evalRoot = resolve("evals/spec-grilling");
 const validVerdict = {
   critical_failure: false,
   scores: {
@@ -91,13 +91,13 @@ it("carries actual conversation responses, changed and deleted files into the ne
     workspace: "unused", artifacts: "unused",
   };
   const next = continueConversation(input, output, "Accept your recommendation.");
-  const workspace = await prepareCase({ input: next, skillPath: resolve(evalRoot, "../SKILL.md") });
+  const workspace = await prepareCase({ input: next, skillPath: resolve("skills/spec-grilling/SKILL.md") });
   try {
     const files = await snapshot(workspace);
     expect(files["SPEC.md"]).toBe("Updated evidence");
     expect(files["notes/CONTEXT.md"]).toBe("Current context");
     expect(files["skill/references/decision-graph.md"]).toBe(
-      await readFile(resolve(evalRoot, "../references/decision-graph.md"), "utf8")
+      await readFile(resolve("skills/spec-grilling/references/decision-graph.md"), "utf8")
     );
     expect(files).not.toHaveProperty("obsolete.md");
     expect(files["TASK.md"]).toContain(output.response);

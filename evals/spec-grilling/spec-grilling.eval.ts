@@ -3,13 +3,13 @@ import { join, relative } from "node:path";
 import { expect } from "vitest";
 import { createJudge, describeEval, toJsonValue } from "vitest-evals";
 import { z } from "zod";
-import { deterministicScore } from "../../../scripts/skill-evals/deterministic.ts";
-import { continueConversation } from "../../../scripts/skill-evals/conversation.ts";
-import type { DeterministicExpectation } from "../../../scripts/skill-evals/deterministic.ts";
-import type { CandidateInput, SkillCase } from "../../../scripts/skill-evals/fixtures.ts";
-import { skillHarness } from "../../../scripts/skill-evals/harness.ts";
-import type { SkillOutput } from "../../../scripts/skill-evals/harness.ts";
-import { gradeWithRepair, createJudgeHarness } from "../../../scripts/skill-evals/judge.ts";
+import { deterministicScore } from "../../scripts/skill-evals/deterministic.ts";
+import { continueConversation } from "../../scripts/skill-evals/conversation.ts";
+import type { DeterministicExpectation } from "../../scripts/skill-evals/deterministic.ts";
+import type { CandidateInput, SkillCase } from "../../scripts/skill-evals/fixtures.ts";
+import { skillHarness } from "../../scripts/skill-evals/harness.ts";
+import type { SkillOutput } from "../../scripts/skill-evals/harness.ts";
+import { gradeWithRepair, createJudgeHarness } from "../../scripts/skill-evals/judge.ts";
 import { specGrillingVerdictSchema, gradeSpecGrillingVerdict } from "./rubric.ts";
 
 const harnessSchema = z.enum(['pi', 'codex']);
@@ -33,7 +33,7 @@ const harness = skillHarness({
   model: EVAL_CONFIG.SKILL_MODEL,
   thinking: EVAL_CONFIG.SKILL_MODEL_THINKING as 'medium',
   runDir: EVAL_CONFIG.SKILL_RUN_DIR,
-  skillPath: join(import.meta.dirname, "../SKILL.md"),
+  skillPath: join(import.meta.dirname, "../../skills/spec-grilling/SKILL.md"),
 });
 const judgeHarness = createJudgeHarness({
   harness: EVAL_CONFIG.JUDGE_HARNESS,
