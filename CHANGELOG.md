@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.5](https://github.com/stalniy/skills/compare/v0.0.4...v0.0.5) (2026-11-19)
+
+
+### Features
+
+* adds spec-review skill ([a104744](https://github.com/stalniy/skills/commit/a1047446ef8738b55a1fe5f6136a435e27cf5345))
+* extract spec-learning into a separate skill ([e1db9e9](https://github.com/stalniy/skills/commit/e1db9e959d2b9fb57f82fe9bd1989e78b1a736bf))
+
+
+### Code Refactoring
+
+* extracts evals out of skills into top level folder ([c27c25f](https://github.com/stalniy/skills/commit/c27c25fa72b1ace52f15f5d35f6606b81ed0f531))
+* shortens spec-grilling skill ([65681cf](https://github.com/stalniy/skills/commit/65681cfc085b8270614790eba8aba974dadb595a))
+
 ## [0.0.4](https://github.com/stalniy/skills/compare/v0.0.3...v0.0.4) (2026-10-15)
 
 
