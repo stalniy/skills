@@ -20,7 +20,7 @@
         "Normalizes snapshot to Export where it refers to the glossary concept, preserving established domain meaning.",
         "Does not create a strategic ADR for reversible UI defaults or invent a new architecture.",
         "Ends SPEC.md with Out of scope and Cleanup summary sections in that order; Out of scope says None and Cleanup summary lists the cleanup issues and resolutions.",
-        "Summarizes each cleanup issue and its resolution, including any resolved without an artifact edit if present, and gives proportionate author feedback; does not implement the screen."
+        "Summarizes each cleanup issue and its resolution, including any resolved without an artifact edit if present; does not implement the screen."
       ]
     }
   ]

@@ -21,7 +21,7 @@ Document review status is distinct from node acceptance. An automatic editable f
 
 The graph records load-bearing decisions and relevant scope boundaries, not every supporting implementation detail. Include relevant settled decisions as well as new issues. Record evidence of acceptance for settled decisions; the presence of a recommendation alone is not approval. Keep lower-impact cleanup outside this graph. If no load-bearing decisions exist, write metadata and an explicit empty-graph statement.
 
-Give each underlying issue a stable `S1`, `S2`, ... ID. Keep its ID when recomputing its recommendation. Use a new ID only for a genuinely new issue; never reuse a retired ID for another issue. Keep superseded history only when useful, outside the active graph.
+Give each underlying issue a stable `I1`, `I2`, ... ID. Keep its ID when recomputing its recommendation. Use a new ID only for a genuinely new issue; never reuse a retired ID for another issue. Keep superseded history only when useful, outside the active graph.
 
 For each active decision, record its status, issue, recommendation in `Decision`, why it is load-bearing, concise evidence, material assumptions, up to three credible alternatives when useful, `depends-on`, and `affects` when known. Explain briefly why the recommendation is preferred. Record decision provenance and rationale, not hidden reasoning. Use established domain terms and short, direct sentences.
 
@@ -35,7 +35,7 @@ review-status: in-progress
 
 # Spec review
 
-## S1
+## I1
 
 status: provisional
 depends-on: []

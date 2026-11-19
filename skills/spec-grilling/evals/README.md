@@ -40,7 +40,7 @@ Each candidate turn gets a fresh temporary workspace. Isolated follow-ups use a 
 
 Candidate and judge traces, file snapshots, and `deterministic.json` are recorded under `.eval-results/<timestamp>/`. Deterministic checks enforce interactive issue counts, controlling-file integrity, and absence of implementation changes. Semantic checks use judge assertions against the response, transcript, and actual before/after files. Keyword presence or absence does not establish semantic correctness.
 
-The judge must return one evidenced verdict per assertion. The runner rejects unsupported assertions, critical failures, disallowed N/A scores, classification scores below 2, any applicable dimension below 1, or an applicable-score average below 1.6. Only scope semantics, ubiquitous language, knowledge artifacts, and author learning permit N/A under the rubric's stated conditions.
+The judge must return one evidenced verdict per assertion. The runner rejects unsupported assertions, critical failures, disallowed N/A scores, classification scores below 2, any applicable dimension below 1, or an applicable-score average below 1.6. Only scope semantics, ubiquitous language, and knowledge artifacts permit N/A under the rubric's stated conditions. Author learning is outside this review rubric; scores from before this split include an additional dimension and are not directly comparable.
 
 Cases 18 and 21 distinguish changing an established contract from preserving it. Case 18 allows either retaining `queued` with an explanation or presenting a concrete strategic rename decision. Case 21 requires no interactive issue for provider internals already isolated by the accepted boundary.
 

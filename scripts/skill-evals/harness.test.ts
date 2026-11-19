@@ -188,12 +188,12 @@ describe("rubric completeness", () => {
 
 describe("generated deterministic checks", () => {
   it("enforces interactive bounds, required terms, forbidden text, and open questions", () => {
-    const response = "🔎 **S1 — Ownership**\nRecommendation: use the cloud as source of truth.";
+    const response = "🔎 **I1 — Ownership**\nRecommendation: use the cloud as source of truth.";
     expect(deterministicScore(response, {
       interactive_min: 1, interactive_max: 1, must_contain_any: ["source of truth"],
       must_not_contain: ["Redis"], forbid_open_design_questions: true,
     }).pass).toBe(true);
-    const score = deterministicScore(`${response}\n🔎 **S2 — Timeout**\nWhat should we use? Redis`, {
+    const score = deterministicScore(`${response}\n🔎 **I2 — Timeout**\nWhat should we use? Redis`, {
       interactive_max: 1, must_not_contain: ["Redis"],
       must_not_match: ["what should"], forbid_open_design_questions: true,
     });

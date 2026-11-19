@@ -16,7 +16,6 @@ export const specGrillingVerdictSchema = verdictSchema.extend({
     ubiquitous_language: optionalScore,
     abstraction_level: requiredScore,
     knowledge_artifacts: optionalScore,
-    author_learning: optionalScore,
   }),
   summary: z.string().min(1),
 });

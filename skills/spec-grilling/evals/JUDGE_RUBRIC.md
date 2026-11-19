@@ -11,7 +11,7 @@ You receive:
 
 Score each dimension from 0 to 2.
 
-Only `scope_semantics`, `ubiquitous_language`, `knowledge_artifacts`, and `author_learning` allow N/A, under their conditions below. Always score the other dimensions. Award 2 for a correctly preserved invariant even when no action is needed: for example, no invented facts, no unnecessary recommendations, no dependent decisions surfaced, or cleanup correctly deferred until acceptance. Do not penalize the agent for waiting before applying unaccepted decisions.
+Only `scope_semantics`, `ubiquitous_language`, and `knowledge_artifacts` allow N/A, under their conditions below. Always score the other dimensions. Award 2 for a correctly preserved invariant even when no action is needed: for example, no invented facts, no unnecessary recommendations, no dependent decisions surfaced, or cleanup correctly deferred until acceptance. Do not penalize the agent for waiting before applying unaccepted decisions.
 
 Judge meaning, not keyword presence. A statement that the spec is not implementation-ready is not a readiness claim. Explaining that HTTP retry differs from Workflow redo is not terminology conflation. Mentioning a technology to reject an unnecessary mechanism is not choosing that mechanism. Parameterizing an unknown retention period without inventing its value is correct even if examples of unsupported values are explicitly rejected.
 
@@ -65,12 +65,6 @@ Judge meaning, not keyword presence. A statement that the spec is not implementa
 - 0: Unaccepted decisions are recorded as established facts or artifacts are misused.
 - Use N/A when no artifact update is relevant in this turn.
 
-10. `author_learning`
-- 2: Important load-bearing gaps get concise principles that would help write an unrelated specification. The lessons identify the planning habit behind the gaps without lecturing.
-- 1: Feedback is relevant but tied to this specification's domain or resolution, too generic to guide a future spec, or slightly verbose.
-- 0: Missing when clearly useful, only repeats the issue or recommendation, or overwhelms the review.
-- Use N/A if no material author lesson exists.
-
 ## Critical failures
 
 Set `critical_failure=true` if any occurs:
@@ -106,8 +100,7 @@ Return JSON only:
     "cleanup_autonomy": 2,
     "ubiquitous_language": "N/A",
     "abstraction_level": 2,
-    "knowledge_artifacts": "N/A",
-    "author_learning": "N/A"
+    "knowledge_artifacts": "N/A"
   },
   "summary": "The recorded behavior satisfies the assertion and applicable dimensions."
 }

@@ -15,7 +15,7 @@ const validVerdict = {
     classification: 2, recommendation_ownership: 2, frontier_discipline: 2,
     scope_semantics: "N/A", fact_discipline: 2, cleanup_autonomy: 2,
     ubiquitous_language: "N/A", abstraction_level: 2,
-    knowledge_artifacts: "N/A", author_learning: "N/A",
+    knowledge_artifacts: "N/A",
   },
   assertions: [{ index: 0, status: "pass", evidence: "SPEC.md retains the accepted contract." }],
   summary: "All required behavior was observed.",
@@ -46,7 +46,7 @@ describe("spec-grilling judge contract", () => {
 
 describe("spec-grilling fixture regressions", () => {
   it.each([
-    ["20_out_of_scope_blocks_design", 1, "🔎 **S1 — Scope boundary**\nThe same-Session guarantee depends on deferred failover. This specification is not implementation-ready."],
+    ["20_out_of_scope_blocks_design", 1, "🔎 **I1 — Scope boundary**\nThe same-Session guarantee depends on deferred failover. This specification is not implementation-ready."],
     ["16_retry_distinct_from_redo", 0, "HTTP client retry is distinct from Workflow redo."],
   ] as const)("does not reject a valid explanation in %s", async (directory, turnIndex, response) => {
     const fixture = JSON.parse(await readFile(resolve(evalRoot, "cases", directory, "case.json"), "utf8"));
@@ -86,7 +86,7 @@ it("carries actual conversation responses, changed and deleted files into the ne
     files: { "SPEC.md": "Identity pending", "obsolete.md": "Old note" },
   };
   const output: SkillOutput = {
-    response: "S1: Create a new Attempt for every retry.", before: input.files,
+    response: "I1: Create a new Attempt for every retry.", before: input.files,
     after: { "SPEC.md": "Updated evidence", "notes/CONTEXT.md": "Current context", "TASK.md": "Old task", "skill/SKILL.md": "Controlling skill" },
     workspace: "unused", artifacts: "unused",
   };
@@ -96,8 +96,8 @@ it("carries actual conversation responses, changed and deleted files into the ne
     const files = await snapshot(workspace);
     expect(files["SPEC.md"]).toBe("Updated evidence");
     expect(files["notes/CONTEXT.md"]).toBe("Current context");
-    expect(files["references/decision-graph.md"]).toBe(
-      await readFile(resolve("skills/references/decision-graph.md"), "utf8")
+    expect(files["skill/references/decision-graph.md"]).toBe(
+      await readFile(resolve(evalRoot, "../references/decision-graph.md"), "utf8")
     );
     expect(files).not.toHaveProperty("obsolete.md");
     expect(files["TASK.md"]).toContain(output.response);

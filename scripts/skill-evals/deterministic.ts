@@ -8,7 +8,7 @@ const openQuestionPatterns = [
 
 export function deterministicScore(response: string, expected: DeterministicExpectation): DeterministicResult {
   const problems: string[] = [];
-  const interactiveIssueCount = [...response.matchAll(/^🔎\s+\*\*S\d+\b/gm)].length;
+  const interactiveIssueCount = [...response.matchAll(/^🔎\s+\*\*I\d+\b/gm)].length;
   if (expected.interactive_min !== undefined && interactiveIssueCount < expected.interactive_min) {
     problems.push(`interactive issues ${interactiveIssueCount} < min ${expected.interactive_min}`);
   }
