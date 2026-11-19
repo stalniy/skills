@@ -3,37 +3,28 @@ import { join, relative } from "node:path";
 import { expect } from "vitest";
 import { createJudge, describeEval, toJsonValue } from "vitest-evals";
 import { z } from "zod";
+import { evalConfigSchema } from "../../scripts/skill-evals/config.ts";
 import type { CandidateInput, SkillCase } from "../../scripts/skill-evals/fixtures.ts";
 import { skillHarness } from "../../scripts/skill-evals/harness.ts";
 import type { SkillOutput } from "../../scripts/skill-evals/harness.ts";
 import { gradeWithRepair, createJudgeHarness } from "../../scripts/skill-evals/judge.ts";
 import { gradeVerdict, verdictSchema } from "../../scripts/skill-evals/rubric.ts";
 
-const harnessSchema = z.enum(["pi", "codex"]);
-const configSchema = z.object({
-  SKILL_HARNESS: harnessSchema.default("pi"),
-  SKILL_MODEL: z.string().default("openrouter/deepseek/deepseek-v4.1-flash"),
-  SKILL_MODEL_THINKING: z.string().default("medium"),
-  SKILL_RUN_DIR: z.string().optional(),
-  JUDGE_HARNESS: harnessSchema.default("codex"),
-  JUDGE_MODEL: z.string().default("gpt-6-sol"),
-  JUDGE_MODEL_THINKING: z.string().default("high"),
-});
-const EVAL_CONFIG = configSchema.parse(process.env);
+const EVAL_CONFIG = evalConfigSchema("high").parse(process.env);
 
 const evalDirectory = join(import.meta.dirname, "./cases");
 const cases = await generatedCases(evalDirectory);
 const harness = skillHarness({
   harness: EVAL_CONFIG.SKILL_HARNESS,
   model: EVAL_CONFIG.SKILL_MODEL,
-  thinking: EVAL_CONFIG.SKILL_MODEL_THINKING as "medium",
+  thinking: EVAL_CONFIG.SKILL_MODEL_THINKING,
   runDir: EVAL_CONFIG.SKILL_RUN_DIR,
   skillPath: join(import.meta.dirname, "../../skills/spec-grilling-auto/SKILL.md"),
 });
 const judgeHarness = createJudgeHarness({
   harness: EVAL_CONFIG.JUDGE_HARNESS,
   model: EVAL_CONFIG.JUDGE_MODEL,
-  thinking: EVAL_CONFIG.JUDGE_MODEL_THINKING as "high",
+  thinking: EVAL_CONFIG.JUDGE_MODEL_THINKING,
 });
 
 describeEval("spec-grilling-auto", { harness, judgeHarness }, (it) => {

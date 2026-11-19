@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createHarness } from "vitest-evals";
 import { runCodex } from "./harness/codex.ts";
+import { runCopilot } from "./harness/copilot.ts";
 import { runPi } from "./harness/pi.ts";
 import { prepareCase, snapshot } from "./fixtures.ts";
 import type { CandidateInput } from "./fixtures.ts";
@@ -10,19 +11,20 @@ import { recordTiming } from "./timing.ts";
 
 const HARNESSES = {
   pi: runPi,
-  codex: runCodex
+  codex: runCodex,
+  copilot: runCopilot
 };
 
 export function skillHarness(agentConfig: {
   harness: keyof typeof HARNESSES;
   model: string;
-  thinking?: "minimal" | "low" | "medium" | "high" | "xhigh";
+  thinking?: string;
   skillPath: string;
   runDir?: string;
   runnerPromptPath?: string;
 }): ReturnType<typeof createHarness<CandidateInput, SkillOutput>> {
   return createHarness<CandidateInput, SkillOutput>({
-    name: "spec-grilling-codex",
+    name: `skill-${agentConfig.harness}`,
     async run({ input, signal, setArtifact }) {
       const workspace = await prepareCase({
         input,

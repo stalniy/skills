@@ -27,7 +27,7 @@ export async function runPi(options: {
   artifacts: string;
   sandbox: "workspace-write" | "read-only";
   model?: string;
-  thinking?: "off" | "minimal" | "low" | "medium" | "high" | "xhigh" | "max";
+  thinking?: string;
   session?: { dir: string; resume: boolean };
   signal?: AbortSignal;
   executable?: string;
