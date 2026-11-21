@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/stalniy/skills/compare/v0.0.5...v0.0.6) (2026-11-21)
+
+
+### Code Refactoring
+
+* refactors spec-grilling evals to be extraction based not judge based ([#11](https://github.com/stalniy/skills/issues/11)) ([826935d](https://github.com/stalniy/skills/commit/826935d0342da0292db7a98a9c3e641a90580644))
+
 ## [0.0.5](https://github.com/stalniy/skills/compare/v0.0.4...v0.0.5) (2026-11-19)
 
 
