@@ -61,7 +61,8 @@ Use this format for each issue:
 `accept (a)` · `edit (e)` · `out of scope (o)`
 ```
 
-Accept replies such as `a I1`, `e I1: <revision>`, and `o I1`.
+Copy the action line verbatim under each issue. Accept replies that pair a
+shortcut with an issue ID, such as `a I1`, `e I1: <revision>`, and `o I1`.
 Apply accepted decisions and user edits to the relevant project knowledge.
 For deferred issues, follow “Out of scope.” Recompute the graph after each
 decision and present the next frontier. When all in-scope load-bearing
