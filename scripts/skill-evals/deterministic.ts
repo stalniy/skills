@@ -9,11 +9,11 @@ const openQuestionPatterns = [
 export function deterministicScore(response: string, expected: DeterministicExpectation): DeterministicResult {
   const problems: string[] = [];
   const interactiveIssueCount = [...response.matchAll(/^🔎\s+\*\*I\d+\b/gm)].length;
-  if (expected.interactive_min !== undefined && interactiveIssueCount < expected.interactive_min) {
-    problems.push(`interactive issues ${interactiveIssueCount} < min ${expected.interactive_min}`);
+  if (expected.issuesMin !== undefined && interactiveIssueCount < expected.issuesMin) {
+    problems.push(`interactive issues ${interactiveIssueCount} < min ${expected.issuesMin}`);
   }
-  if (expected.interactive_max !== undefined && interactiveIssueCount > expected.interactive_max) {
-    problems.push(`interactive issues ${interactiveIssueCount} > max ${expected.interactive_max}`);
+  if (expected.issuesMax !== undefined && interactiveIssueCount > expected.issuesMax) {
+    problems.push(`interactive issues ${interactiveIssueCount} > max ${expected.issuesMax}`);
   }
   if (expected.must_contain_any?.length && !expected.must_contain_any.some(term => response.toLowerCase().includes(term.toLowerCase()))) {
     problems.push("none of must_contain_any matched");
@@ -33,8 +33,8 @@ export function deterministicScore(response: string, expected: DeterministicExpe
 }
 
 export type DeterministicExpectation = {
-  interactive_min?: number;
-  interactive_max?: number;
+  issuesMin?: number;
+  issuesMax?: number;
   must_contain_any?: string[];
   must_not_contain?: string[];
   must_not_match?: string[];

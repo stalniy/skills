@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createHarness } from "vitest-evals";
@@ -26,23 +26,23 @@ export function skillHarness(agentConfig: {
   return createHarness<CandidateInput, SkillOutput>({
     name: `skill-${agentConfig.harness}`,
     async run({ input, signal, setArtifact }) {
-      const workspace = await prepareCase({
+      await using prepared = await prepareCase({
         input,
         skillPath: agentConfig.skillPath,
         runnerPromptPath: agentConfig.runnerPromptPath
       });
+      const { workspace, prompt, initialFiles } = prepared;
       const root = process.env.EVAL_RUN_DIR ?? tmpdir();
       await mkdir(root, { recursive: true });
       const artifacts = await mkdtemp(join(root, `${input.id}-`));
       setArtifact("paths", { workspace, artifacts });
-      const before = await snapshot(workspace);
-      await writeFile(join(artifacts, "before.json"), JSON.stringify(before, null, 2));
-      const prompt = await readFile(join(workspace, "TASK.md"), "utf8");
+      await writeFile(join(artifacts, "before.json"), JSON.stringify(initialFiles, null, 2));
       const result = await recordTiming(artifacts, "skill", () => HARNESSES[agentConfig.harness]({
         prompt,
         workspace,
         artifacts: join(artifacts, "candidate"),
         sandbox: "workspace-write",
+        isolateWorkspace: true,
         model: agentConfig.model,
         thinking: agentConfig.thinking ?? "medium",
         signal,
@@ -50,8 +50,15 @@ export function skillHarness(agentConfig: {
       const after = await snapshot(workspace);
       await writeFile(join(artifacts, "after.json"), JSON.stringify(after, null, 2));
       return {
-        output: { response: result.output, before, after, workspace, artifacts },
-        events: result.events, usage: result.usage,
+        events: result.events,
+        usage: result.usage,
+        output: {
+          response: result.output,
+          before: initialFiles,
+          after,
+          workspace,
+          artifacts
+        },
       };
     },
   });

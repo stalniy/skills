@@ -1,11 +1,12 @@
 import { execFile } from "node:child_process";
 import { appendFileSync } from "node:fs";
-import { access, mkdir, symlink, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtempDisposable, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { promisify } from "node:util";
 import { z } from "zod";
 import type { TranscriptEvent, UsageSummary } from "vitest-evals";
+import { resolveExecutable, workspaceSandboxArgs } from "./workspace-sandbox.ts";
 
 const execute = promisify(execFile);
 const eventSchema = z.object({
@@ -29,15 +30,26 @@ export async function runCodex(options: {
   session?: { home: string; threadId?: string };
   signal?: AbortSignal;
   executable?: string;
+  isolateWorkspace?: boolean;
 }): Promise<CodexResult> {
   await mkdir(options.artifacts, { recursive: true });
-  if (options.session) await prepareCodexHome(options.session.home);
-  const args = options.session?.threadId ? ["exec", "resume", options.session.threadId] : ["exec"];
+  await using ephemeralHome = options.isolateWorkspace && !options.session
+    ? await mkdtempDisposable(join(tmpdir(), "eval-codex-"))
+    : undefined;
+  const home = options.session?.home ?? ephemeralHome?.path;
+  if (home) await prepareCodexHome(home);
+  const command = options.executable ?? "codex";
+  const executable = options.isolateWorkspace ? await resolveExecutable(command) : command;
+  const args = ["exec", ...(options.isolateWorkspace ? [] : ["--sandbox", options.sandbox]), "--cd", options.workspace];
+  if (options.isolateWorkspace) {
+    args.push(...workspaceSandboxArgs([executable]), "-c", 'default_permissions="skill-eval"',
+      "-c", 'approval_policy="never"', "--ignore-rules");
+  }
+  if (options.session?.threadId) args.push("resume", options.session.threadId);
   args.push("--json");
   if (!options.session) args.push("--ephemeral");
-  args.push("--skip-git-repo-check", "--ignore-user-config",
-    "--sandbox", options.sandbox, "--cd", options.workspace,
-    "-c", "web_search=\"disabled\"", "-c", "sandbox_workspace_write.network_access=false");
+  args.push("--skip-git-repo-check", "--ignore-user-config", "-c", 'web_search="disabled"');
+  if (!options.isolateWorkspace) args.push("-c", "sandbox_workspace_write.network_access=false");
   if (options.model) args.push("--model", options.model);
   if (options.thinking) args.push("-c", `model_reasoning_effort=\"${options.thinking}\"`);
   if (options.schema) {
@@ -50,10 +62,10 @@ export async function runCodex(options: {
     args, model: options.model ?? "Codex default (user config ignored)", thinking: options.thinking,
   }, null, 2));
   try {
-    const execution = execute(options.executable ?? "codex", args, {
+    const execution = execute(executable, args, {
       cwd: options.workspace, signal: options.signal, timeout: 240_000,
       maxBuffer: 16 * 1024 * 1024, encoding: "utf8",
-      ...(options.session ? { env: { ...process.env, CODEX_HOME: options.session.home } } : {}),
+      ...(home ? { env: { ...process.env, CODEX_HOME: home, ...(options.isolateWorkspace ? { HOME: home } : {}) } } : {}),
     });
     execution.child.stdin?.end();
     execution.child.stdout?.on("data", chunk => appendFileSync(join(options.artifacts, "trace.jsonl"), chunk));

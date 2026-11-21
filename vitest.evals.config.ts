@@ -11,16 +11,8 @@ export default defineConfig({
     strictTags: false,
     tags: [
       {
-        name: 'smoke',
-        description: 'Quick and cheap evals.',
-      },
-      {
         name: 'must-have',
         description: 'Evals is part of the core functionality',
-      },
-      {
-        name: 'long-expensive',
-        description: 'Expensive long running evals.',
       },
       {
         name: 'nice-to-have',

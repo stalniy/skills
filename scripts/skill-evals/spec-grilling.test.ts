@@ -1,7 +1,11 @@
-import { readFile, readdir, rm } from "node:fs/promises";
-import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { describe, expect, it, vi } from "vitest";
+import { expectClosingSections, expectDecisionGraph, graphNodes } from "../../evals/spec-grilling/artifacts.ts";
+import { expectEvidenceQuote } from "../../evals/spec-grilling/extraction.ts";
 import { gradeSpecGrillingVerdict, specGrillingVerdictSchema } from "../../evals/spec-grilling/rubric.ts";
+import { prepareReview } from "../../evals/spec-grilling/review.ts";
+import * as agent from "./agent.ts";
 import { continueConversation } from "./conversation.ts";
 import { deterministicScore } from "./deterministic.ts";
 import { prepareCase, snapshot } from "./fixtures.ts";
@@ -45,38 +49,88 @@ describe("spec-grilling judge contract", () => {
 });
 
 describe("spec-grilling fixture regressions", () => {
-  it.each([
-    ["20_out_of_scope_blocks_design", 1, "🔎 **I1 — Scope boundary**\nThe same-Session guarantee depends on deferred failover. This specification is not implementation-ready."],
-    ["16_retry_distinct_from_redo", 0, "HTTP client retry is distinct from Workflow redo."],
-  ] as const)("does not reject a valid explanation in %s", async (directory, turnIndex, response) => {
-    const fixture = JSON.parse(await readFile(resolve(evalRoot, "cases", directory, "case.json"), "utf8"));
-    expect(deterministicScore(response, fixture.turns[turnIndex].expected).problems).toEqual([]);
-    expect(fixture.turns[turnIndex].assertions.length).toBeGreaterThan(0);
+  it("checks extracted evidence against visible Markdown link text", () => {
+    const response = "Partners replay archived rows. The [accepted feed decision](docs/adr/004-feed.md) requires coordinated partner upgrades.";
+    expectEvidenceQuote(response, "Partners replay archived rows. The accepted feed decision requires coordinated partner upgrades.");
+    expectEvidenceQuote(response, "The [accepted feed decision](docs/adr/004-feed.md) requires coordinated partner upgrades.");
+    expect(() => expectEvidenceQuote(response, "The accepted feed decision requires no upgrades.")).toThrow();
+    expect(() => expectEvidenceQuote(response, "   ")).toThrow();
   });
 
-  it("keeps semantic assertions out of lexical hard gates and supplies all trajectory assertions", async () => {
-    const root = resolve(evalRoot, "cases");
-    const ids = new Set<string>();
-    for (const directory of await readdir(root)) {
-      const fixture = JSON.parse(await readFile(resolve(root, directory, "case.json"), "utf8"));
-      expect(ids.has(fixture.id)).toBe(false);
-      ids.add(fixture.id);
-      expect(fixture.expected_summary.length).toBeGreaterThan(0);
-      expect(await readFile(resolve(root, directory, "input/SPEC.md"), "utf8")).not.toBe("");
-      for (const turn of fixture.turns) {
-        expect(turn.user.length).toBeGreaterThan(0);
-        expect(Object.keys(turn.expected).every(key => ["interactive_min", "interactive_max"].includes(key))).toBe(true);
-        if (fixture.mode === "conversation") {
-          expect(turn.assertions.length).toBeGreaterThan(0);
-          expect(turn.prior_assistant_response).toBeUndefined();
-        }
-      }
-    }
-    const rename = JSON.parse(await readFile(resolve(root, "18_cleanup_reveals_load_bearing/case.json"), "utf8"));
-    expect(deterministicScore("Preserved queued because renaming requires migration.", rename.turns[0].expected).pass).toBe(true);
-    const boundary = JSON.parse(await readFile(resolve(root, "21_boundary_isolates_deferred/case.json"), "utf8"));
-    expect(boundary.turns[0].expected.interactive_max).toBe(0);
+  it.each([
+    [{ issuesMin: 1 }, "🔎 **I1 — Scope boundary**\nThe same-Session guarantee depends on deferred failover. This specification is not implementation-ready."],
+    [{ issuesMax: 0 }, "HTTP client retry is distinct from Workflow redo."],
+    [{ issuesMax: 1 }, "Preserved queued because renaming requires migration."],
+  ] as const)("counts only interactive issue headings for %j", (expected, response) => {
+    expect(deterministicScore(response, expected).problems).toEqual([]);
   });
+
+  it("keeps one Vitest file and a filesystem specification in every case directory", async () => {
+    const root = resolve(evalRoot, "cases");
+    const directories = (await readdir(root, { withFileTypes: true })).filter(entry => entry.isDirectory());
+    expect(directories.length).toBeGreaterThan(0);
+    for (const { name } of directories) {
+      const entries = await readdir(resolve(root, name));
+      expect(entries.filter(file => file.endsWith(".eval.ts")), name).toEqual(["case.eval.ts"]);
+      expect(entries, name).not.toContain("case.json");
+      expect(await readFile(resolve(root, name, "input/SPEC.md"), "utf8")).not.toBe("");
+    }
+  });
+});
+
+it("resumes the candidate's review session with its previous files and captures each turn", async ({ signal }) => {
+  const directory = resolve(evalRoot, "cases", "31-carries-accepted-recommendations-and-graph-dependencies-across-live-turns");
+  const sessionId = "actual-review-session";
+  const firstReply = "🔎 **I1 — Job identity**\nKeep the same Job identifier across retries.";
+  const graphPath = ".spec-grill/job-retry-identity/decision-graph.ai.md";
+  const provisionalGraph = [
+    "---", "review-mode: interactive", "review-status: in-progress", "---", "",
+    "## I1", "", "status: provisional", "depends-on: []", "",
+    "### Evidence", "", "- SPEC.md defines Job retries.", "",
+  ].join("\n");
+  const run = vi.spyOn(agent, "runAgent")
+    .mockImplementationOnce(async options => {
+      expect(options.sessionId).toBeUndefined();
+      expect(options.prompt).toContain("Review the Job identity.");
+      const spec = await readFile(join(options.workspace, "SPEC.md"), "utf8");
+      expect(options.prompt).not.toContain(spec.trim());
+      expect(await readFile(join(options.workspace, "TASK.md"), "utf8")).toBe(options.prompt);
+      await writeFile(join(options.workspace, "identity.md"), "Provisional recommendation.");
+      await mkdir(join(options.workspace, ".spec-grill/job-retry-identity"), { recursive: true });
+      await writeFile(join(options.workspace, graphPath), provisionalGraph);
+      return { sessionId, output: firstReply, events: [], usage: {} };
+    })
+    .mockImplementationOnce(async options => {
+      expect(options.sessionId).toBe(sessionId);
+      expect(options.prompt).toBe("Accept the recommendation.");
+      expect(await readFile(join(options.workspace, "identity.md"), "utf8")).toBe("Provisional recommendation.");
+      await writeFile(join(options.workspace, "identity.md"), "Accepted recommendation.");
+      await writeFile(join(options.workspace, graphPath), provisionalGraph.replace("in-progress", "complete").replace("provisional", "accepted"));
+      await writeFile(join(options.workspace, "SPEC.md"), "# Identity\n\n## Out of scope\n\nNone\n\n## Cleanup summary\n\nNone\n");
+      return { sessionId, output: `Recorded identity in the [decision graph](${join(options.workspace, graphPath)}).`, events: [], usage: {} };
+    });
+  try {
+    await using review = await prepareReview(directory, "Review the Job identity.", signal);
+    const first = await review.run({ issuesMin: 1, issuesMax: 1 });
+    const second = await review.run({ issuesMax: 0 }, "Accept the recommendation.");
+    expect(second.history).toEqual([
+      { role: "user", content: "Review the Job identity." },
+      { role: "assistant", content: firstReply },
+    ]);
+    expect(second.before).toEqual(first.after);
+    expect(second.after["identity.md"]).toBe("Accepted recommendation.");
+    expect(JSON.parse(await readFile(join(second.artifacts, "after.json"), "utf8"))).toEqual(second.after);
+    const firstGraph = expectDecisionGraph(first, "in-progress");
+    const secondGraph = expectDecisionGraph(second, "complete");
+    expect(secondGraph.path).toBe(firstGraph.path);
+    expect(graphNodes(firstGraph.contents)).toEqual([{ id: "I1", status: "provisional", dependsOn: [] }]);
+    expect(graphNodes(secondGraph.contents)).toEqual([{ id: "I1", status: "accepted", dependsOn: [] }]);
+    expectClosingSections(second, { noDeferrals: true });
+    expect(run).toHaveBeenCalledTimes(2);
+  }
+  finally {
+    run.mockRestore();
+  }
 });
 
 it("carries actual conversation responses, changed and deleted files into the next prepared workspace", async () => {
@@ -91,26 +145,21 @@ it("carries actual conversation responses, changed and deleted files into the ne
     workspace: "unused", artifacts: "unused",
   };
   const next = continueConversation(input, output, "Accept your recommendation.");
-  const workspace = await prepareCase({ input: next, skillPath: resolve("skills/spec-grilling/SKILL.md") });
-  try {
-    const files = await snapshot(workspace);
-    expect(files["SPEC.md"]).toBe("Updated evidence");
-    expect(files["notes/CONTEXT.md"]).toBe("Current context");
-    expect(files["skill/references/decision-graph.md"]).toBe(
-      await readFile(resolve("skills/spec-grilling/references/decision-graph.md"), "utf8")
-    );
-    expect(files).not.toHaveProperty("obsolete.md");
-    expect(files["TASK.md"]).toContain(output.response);
-    expect(files["TASK.md"]).toContain(next.prompt);
-    expect(files["TASK.md"]).not.toContain("Old task");
-    expect(next.history).toEqual([...input.history, { role: "user", content: input.prompt }, { role: "assistant", content: output.response }]);
-    const final = continueConversation(next, { ...output, response: "S2: Key scope recommendation.", after: { ...next.files, "adr/identity.md": "Accepted new-Attempt model" } }, "Accept S2.");
-    expect(final.files["adr/identity.md"]).toBe("Accepted new-Attempt model");
-    expect(final.history.map(message => message.content)).toEqual([
-      "Preserve existing requirements.", input.prompt, output.response, next.prompt, "S2: Key scope recommendation.",
-    ]);
-  }
-  finally {
-    await rm(workspace, { recursive: true, force: true });
-  }
+  await using prepared = await prepareCase({ input: next, skillPath: resolve("skills/spec-grilling/SKILL.md") });
+  const files = await snapshot(prepared.workspace);
+  expect(files["SPEC.md"]).toBe("Updated evidence");
+  expect(files["notes/CONTEXT.md"]).toBe("Current context");
+  const graphContract = await readFile(resolve("skills/spec-grilling/references/decision-graph.md"), "utf8");
+  expect(files["skill/references/decision-graph.md"]).toBe(graphContract);
+  expect(prepared.prompt).toContain(`--- skill/references/decision-graph.md ---\n${graphContract}`);
+  expect(files).not.toHaveProperty("obsolete.md");
+  expect(files["TASK.md"]).toContain(output.response);
+  expect(files["TASK.md"]).toContain(next.prompt);
+  expect(files["TASK.md"]).not.toContain("Old task");
+  expect(next.history).toEqual([...(input.history ?? []), { role: "user", content: input.prompt }, { role: "assistant", content: output.response }]);
+  const final = continueConversation(next, { ...output, response: "S2: Key scope recommendation.", after: { ...next.files, "adr/identity.md": "Accepted new-Attempt model" } }, "Accept S2.");
+  expect(final.files["adr/identity.md"]).toBe("Accepted new-Attempt model");
+  expect(final.history?.map(message => message.content)).toEqual([
+    "Preserve existing requirements.", input.prompt, output.response, next.prompt, "S2: Key scope recommendation.",
+  ]);
 });

@@ -1,4 +1,4 @@
-import { chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { access, chmod, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -84,12 +84,34 @@ describe("Copilot trace normalization", () => {
 });
 
 describe("Copilot CLI execution", () => {
-  it("runs the candidate in the fixture workspace and records invocation and snapshots", async () => {
+  it.skipIf(!process.env.SKILL_EVAL_SANDBOX_INTEGRATION)("isolates the candidate and records invocation and snapshots", async () => {
     const directory = await mkdtemp(join(tmpdir(), "copilot-harness-test-"));
-    let workspace: string | undefined;
     try {
       const executable = join(directory, "fake-copilot.mjs");
-      await writeFile(executable, `#!/usr/bin/env node\nimport { writeFileSync } from "node:fs";\nprocess.stdin.resume();\nprocess.stdin.on("end", () => { writeFileSync("result.md", "Updated"); process.stdout.write(${JSON.stringify(trace)}); });\n`);
+      const expected = join(directory, "expected.txt");
+      await writeFile(expected, "Synthetic expected result");
+      await writeFile(executable, `#!/usr/bin/env node
+import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { linkSync, readFileSync, symlinkSync, unlinkSync, writeFileSync } from "node:fs";
+import { getCACertificates } from "node:tls";
+const outside = ${JSON.stringify(expected)};
+const isDenied = error => ["EACCES", "EPERM", "ENOENT"].includes(error.code);
+assert.equal(readFileSync("SPEC.md", "utf8"), "A spec");
+assert.equal(process.env.SSL_CERT_FILE, process.env.NODE_EXTRA_CA_CERTS);
+assert.ok(getCACertificates("extra").length > 0);
+assert.throws(() => writeFileSync(process.env.SSL_CERT_FILE, "replacement"), isDenied);
+assert.throws(() => readFileSync(outside, "utf8"), isDenied);
+assert.throws(() => linkSync(outside, "outside-hardlink"), isDenied);
+symlinkSync(outside, "outside-symlink");
+assert.throws(() => readFileSync("outside-symlink", "utf8"), isDenied);
+const child = spawnSync("/bin/cat", [outside]);
+assert.equal(child.error, undefined);
+assert.notEqual(child.status, 0);
+unlinkSync("outside-symlink");
+process.stdin.resume();
+process.stdin.on("end", () => { writeFileSync("result.md", "Updated"); process.stdout.write(${JSON.stringify(trace)}); });
+`);
       await chmod(executable, 0o755);
       const skill = join(directory, "SKILL.md");
       await writeFile(skill, "Review the spec.");
@@ -100,7 +122,7 @@ describe("Copilot CLI execution", () => {
         { id: "copilot-test", prompt: "Review", files: { "SPEC.md": "A spec" }, history: [], tags: [] },
         { artifacts: {}, setArtifact() {} },
       );
-      workspace = run.output!.workspace;
+      await expect(access(run.output!.workspace)).rejects.toMatchObject({ code: "ENOENT" });
       expect(run.output!.response).toBe("Recommendation");
       expect(run.output!.after["result.md"]).toBe("Updated");
       expect(run.output!.before["result.md"]).toBeUndefined();
@@ -111,7 +133,6 @@ describe("Copilot CLI execution", () => {
       expect(await readFile(join(run.output!.artifacts, "candidate", "trace.jsonl"), "utf8")).toBe(trace);
     }
     finally {
-      if (workspace) await rm(workspace, { recursive: true, force: true });
       await rm(directory, { recursive: true, force: true });
     }
   });

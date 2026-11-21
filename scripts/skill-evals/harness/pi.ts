@@ -1,10 +1,12 @@
 import { execFile } from "node:child_process";
-import { appendFileSync } from "node:fs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { appendFileSync, constants } from "node:fs";
+import { copyFile, mkdir, mkdtempDisposable, writeFile } from "node:fs/promises";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { z } from "zod";
 import type { TranscriptEvent, UsageSummary } from "vitest-evals";
+import { sandboxedInvocation } from "./workspace-sandbox.ts";
 
 const execute = promisify(execFile);
 const contentSchema = z.object({
@@ -19,7 +21,9 @@ const messageSchema = z.object({
   }).passthrough().optional(),
   model: z.string().optional(), toolCallId: z.string().optional(), toolName: z.string().optional(), isError: z.boolean().optional(),
 }).passthrough();
-const eventSchema = z.object({ type: z.string(), messages: z.array(messageSchema).optional() }).passthrough();
+const eventSchema = z.object({
+  type: z.string(), id: z.string().optional(), messages: z.array(messageSchema).optional(),
+}).passthrough();
 
 export async function runPi(options: {
   prompt: string;
@@ -28,16 +32,18 @@ export async function runPi(options: {
   sandbox: "workspace-write" | "read-only";
   model?: string;
   thinking?: string;
-  session?: { dir: string; resume: boolean };
+  session?: { dir: string; resume?: boolean; sessionId?: string };
   signal?: AbortSignal;
   executable?: string;
+  isolateWorkspace?: boolean;
 }): Promise<PiResult> {
   await mkdir(options.artifacts, { recursive: true });
   const args = ["-p", "--mode", "json", "--no-approve", "--no-extensions", "--no-skills",
     "--no-prompt-templates", "--no-themes", "--no-context-files"];
   if (options.session) {
     args.push("--session-dir", options.session.dir);
-    if (options.session.resume) args.push("--continue");
+    if (options.session.sessionId) args.push("--session", options.session.sessionId);
+    else if (options.session.resume) args.push("--continue");
   }
   else args.push("--no-session");
   if (options.sandbox === "read-only") args.push("--tools", "read,grep,find,ls");
@@ -48,9 +54,16 @@ export async function runPi(options: {
     args, model: options.model ?? "Pi default", sandbox: options.sandbox,
   }, null, 2));
   try {
-    const execution = execute(options.executable ?? "pi", args, {
+    const executable = options.executable ?? "pi";
+    await using launcher = options.isolateWorkspace ? await mkdtempDisposable(join(tmpdir(), "eval-sandbox-")) : undefined;
+    await using runtime = launcher && !options.session ? await mkdtempDisposable(join(tmpdir(), "eval-pi-")) : undefined;
+    const invocation = launcher
+      ? await isolatedPi(executable, args, options.workspace, options.session?.dir ?? runtime!.path, launcher.path)
+      : { executable, args, env: undefined };
+    const execution = execute(invocation.executable, invocation.args, {
       cwd: options.workspace, signal: options.signal, timeout: 480_000,
       maxBuffer: 16 * 1024 * 1024, encoding: "utf8",
+      env: invocation.env,
     });
     execution.child.stdin?.end();
     execution.child.stdout?.on("data", chunk => appendFileSync(join(options.artifacts, "trace.jsonl"), chunk));
@@ -66,6 +79,24 @@ export async function runPi(options: {
     await writeFile(join(options.artifacts, "error.txt"), `${failure.message}\n${failure.stderr ?? ""}`);
     throw new Error(`Pi execution failed; inspect ${options.artifacts}`, { cause: error });
   }
+}
+
+async function isolatedPi(executable: string, args: string[], workspace: string, runtimeDir: string, launcherHome: string) {
+  await mkdir(runtimeDir, { recursive: true });
+  const sourceDir = process.env.PI_CODING_AGENT_DIR ?? join(homedir(), ".pi", "agent");
+  for (const file of ["auth.json", "models.json"]) {
+    try {
+      await copyFile(join(sourceDir, file), join(runtimeDir, file), constants.COPYFILE_EXCL);
+    }
+    catch (error) {
+      const { code } = error as NodeJS.ErrnoException;
+      if (code !== "ENOENT" && code !== "EEXIST") throw error;
+    }
+  }
+  return sandboxedInvocation(executable, args, {
+    workspace, runtimeDir, launcherHome, nodePackage: true,
+    env: { PI_CODING_AGENT_DIR: runtimeDir, PI_PACKAGE_DIR: undefined },
+  });
 }
 
 export function decodePi(jsonl: string, prompt: string, model?: string): PiResult {
@@ -107,11 +138,13 @@ export function decodePi(jsonl: string, prompt: string, model?: string): PiResul
     }
   }
   if (!output.trim()) throw new Error("Pi returned no assistant response");
-  return { output, events, usage };
+  const sessionId = raw.find(event => event.type === "session")?.id;
+  return { output, events, usage, sessionId };
 }
 
 export type PiResult = {
   output: string;
   events: TranscriptEvent[];
   usage: UsageSummary;
+  sessionId?: string;
 };

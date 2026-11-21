@@ -51,20 +51,21 @@ describe("fixture isolation", () => {
       tags: [],
     };
     const assertion = "The assistant recommends the synthetic option.";
-    const workspace = await prepareCase({ input: candidate, skillPath });
     try {
+      await using prepared = await prepareCase({ input: candidate, skillPath });
+      const { workspace, prompt, initialFiles } = prepared;
       const files = await snapshot(workspace);
+      expect(files).toEqual(initialFiles);
       expect(files).toEqual({
         ...candidate.files,
         "skill/SKILL.md": syntheticSkill,
-        "TASK.md": expect.any(String),
+        "TASK.md": prompt,
       });
-      expect(files["TASK.md"]).toContain(candidate.prompt);
-      for (const message of candidate.history) expect(files["TASK.md"]).toContain(message.content);
-      expect(files["TASK.md"]).not.toContain(assertion);
+      expect(prompt).toContain(candidate.prompt);
+      for (const message of candidate.history ?? []) expect(prompt).toContain(message.content);
+      expect(prompt).not.toContain(assertion);
     }
     finally {
-      await rm(workspace, { recursive: true, force: true });
       await rm(directory, { recursive: true, force: true });
     }
   });
@@ -101,7 +102,7 @@ describe("Codex trace normalization", () => {
     expect(run.usage).toMatchObject({ inputTokens: 100, outputTokens: 20, model: "test-model" });
     expect(run.events).toContainEqual(expect.objectContaining({ type: "tool_result", content: "A spec" }));
   });
-  it("resumes a saved thread in an isolated Codex home", async () => {
+  it.each([false, true])("resumes a saved thread with workspace isolation set to %s", async (isolateWorkspace) => {
     const directory = await mkdtemp(join(tmpdir(), "skill-eval-codex-resume-"));
     const executable = join(directory, "fake-codex.mjs");
     const trace = [
@@ -110,17 +111,29 @@ describe("Codex trace normalization", () => {
       { type: "turn.completed", usage: { input_tokens: 1, output_tokens: 1 } },
     ].map(event => JSON.stringify(event)).join("\n");
     try {
-      await writeFile(executable, `#!/usr/bin/env node\nprocess.stdin.resume();\nprocess.stdin.on("end", () => process.stdout.write(${JSON.stringify(trace)}));\n`);
-      await chmod(executable, 0o755);
       const artifacts = join(directory, "artifacts");
       const home = join(directory, "codex-home");
+      const expectedHome = isolateWorkspace ? home : process.env.HOME;
+      await writeFile(executable, `#!/usr/bin/env node
+import assert from "node:assert/strict";
+assert.equal(process.env.CODEX_HOME, ${JSON.stringify(home)});
+assert.equal(process.env.HOME, ${JSON.stringify(expectedHome)});
+process.stdin.resume();
+process.stdin.on("end", () => process.stdout.write(${JSON.stringify(trace)}));
+`);
+      await chmod(executable, 0o755);
       const result = await runCodex({
-        executable, prompt: "Repair response", workspace: directory, artifacts, sandbox: "read-only",
+        executable, prompt: "Repair response", workspace: directory, artifacts, sandbox: "read-only", isolateWorkspace,
         session: { home, threadId: "thread-123" },
       });
       const invocation = JSON.parse(await readFile(join(artifacts, "invocation.json"), "utf8"));
       expect(result.threadId).toBe("thread-123");
-      expect(invocation.args.slice(0, 3)).toEqual(["exec", "resume", "thread-123"]);
+      expect(invocation.args.slice(0, 5)).toEqual(isolateWorkspace
+        ? ["exec", "--cd", directory, "-c", expect.stringContaining("permissions.skill-eval")]
+        : ["exec", "--sandbox", "read-only", "--cd", directory]);
+      const resumeIndex = invocation.args.indexOf("resume");
+      expect(resumeIndex).toBeGreaterThan(invocation.args.indexOf("--cd"));
+      expect(invocation.args[resumeIndex + 1]).toBe("thread-123");
       expect(invocation.args).not.toContain("--ephemeral");
     }
     finally {
@@ -138,15 +151,25 @@ describe("Pi trace normalization", () => {
   it("runs in the requested workspace and records invocation artifacts", async () => {
     const directory = await mkdtemp(join(tmpdir(), "skill-eval-pi-"));
     const executable = join(directory, "fake-pi.mjs");
-    const trace = JSON.stringify({ type: "agent_end", messages: [{ role: "assistant", content: [{ type: "text", text: "Pi response" }] }] });
+    const trace = [
+      { type: "session", id: "pi-session" },
+      { type: "agent_end", messages: [{ role: "assistant", content: [{ type: "text", text: "Pi response" }] }] },
+    ].map(event => JSON.stringify(event)).join("\n");
     try {
       await writeFile(executable, `#!/usr/bin/env node\nprocess.stdout.write(${JSON.stringify(trace)});\n`);
       await chmod(executable, 0o755);
       const artifacts = join(directory, "artifacts");
-      const result = await runPi({ executable, prompt: "Test", workspace: directory, artifacts, sandbox: "read-only", model: "test-model" });
+      const result = await runPi({
+        executable, prompt: "Test", workspace: directory, artifacts, sandbox: "read-only", model: "test-model",
+        session: { dir: directory, sessionId: "pi-session" },
+      });
       expect(result.output).toBe("Pi response");
+      expect(result.sessionId).toBe("pi-session");
       expect(await readFile(join(artifacts, "trace.jsonl"), "utf8")).toBe(trace);
-      expect(await readFile(join(artifacts, "invocation.json"), "utf8")).toContain("read,grep,find,ls");
+      const invocation = JSON.parse(await readFile(join(artifacts, "invocation.json"), "utf8"));
+      expect(invocation.args).toContain("read,grep,find,ls");
+      expect(invocation.args.slice(invocation.args.indexOf("--session"), invocation.args.indexOf("--session") + 2))
+        .toEqual(["--session", "pi-session"]);
     }
     finally {
       await rm(directory, { recursive: true, force: true });
@@ -190,11 +213,11 @@ describe("generated deterministic checks", () => {
   it("enforces interactive bounds, required terms, forbidden text, and open questions", () => {
     const response = "🔎 **I1 — Ownership**\nRecommendation: use the cloud as source of truth.";
     expect(deterministicScore(response, {
-      interactive_min: 1, interactive_max: 1, must_contain_any: ["source of truth"],
+      issuesMin: 1, issuesMax: 1, must_contain_any: ["source of truth"],
       must_not_contain: ["Redis"], forbid_open_design_questions: true,
     }).pass).toBe(true);
     const score = deterministicScore(`${response}\n🔎 **I2 — Timeout**\nWhat should we use? Redis`, {
-      interactive_max: 1, must_not_contain: ["Redis"],
+      issuesMax: 1, must_not_contain: ["Redis"],
       must_not_match: ["what should"], forbid_open_design_questions: true,
     });
     expect(score.pass).toBe(false);

@@ -49,7 +49,7 @@ Judge meaning, not keyword presence. A statement that the spec is not implementa
 - 0: Minor configurable/local details are pushed to the user.
 
 7. `ubiquitous_language`
-- 2: CONTEXT/GLOSSARY terms are used consistently and distinct concepts remain distinct.
+- 2: GLOSSARY terms are used consistently and distinct concepts remain distinct.
 - 1: Minor terminology drift.
 - 0: Defined domain language is ignored or distinct concepts are collapsed.
 - Use N/A when no terminology evidence exists.
@@ -60,7 +60,7 @@ Judge meaning, not keyword presence. A statement that the spec is not implementa
 - 0: Recommendation hard-codes implementation detail that the spec does not require.
 
 9. `knowledge_artifacts`
-- 2: ADR/GLOSSARY/CONTEXT update timing and purpose are correct.
+- 2: ADR/GLOSSARY update timing and purpose are correct.
 - 1: Suggested updates are plausible but incomplete.
 - 0: Unaccepted decisions are recorded as established facts or artifacts are misused.
 - Use N/A when no artifact update is relevant in this turn.
