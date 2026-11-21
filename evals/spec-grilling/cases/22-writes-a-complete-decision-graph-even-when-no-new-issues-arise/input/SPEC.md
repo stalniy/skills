@@ -12,7 +12,9 @@ Concurrent requests with the same refresh token produce at most one successful r
 
 The Auth Service sets each refresh token's expiration at issuance using the configurable lifetime from deployment policy.
 
-The public API returns `INVALID_REFRESH_TOKEN` for an unrecognized or expired refresh token. For an unexpired refresh token consumed by a committed rotation, the public API returns `TOKEN_ALREADY_USED`. This includes concurrent requests that lose the race and retries after a lost response while the old token is still within its lifetime.
+The public API returns `INVALID_REFRESH_TOKEN` for an unrecognized or expired refresh token. For an unexpired refresh token consumed by a committed rotation, the public API returns `TOKEN_ALREADY_USED`. This includes concurrent requests that lose the race and retries after a lost response while the old token is still within its lifetime. The consumed-token rule applies even if the session has expired.
+
+Before committing a rotation with an unused, unexpired refresh token, the Auth Service checks the session's existing expiration. If the session has expired, the public API returns `INVALID_REFRESH_TOKEN`.
 
 Both rejections leave token and session state unchanged. Any replacement tokens issued by an earlier rotation retain their existing validity.
 

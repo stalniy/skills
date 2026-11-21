@@ -73,7 +73,12 @@ issues are settled, proceed to cleanup.
 
 It does not mean the concern is solved or invalid.
 
-Record the boundary when future work can depend on it.
+If project evidence already places an open concern outside the current
+requirements and establishes a boundary that lets every in-scope guarantee
+hold independently, treat the scope as settled. Keep the concern out of the
+interactive frontier. Record the concern and its existing boundary in the
+specification and decision graph during cleanup, and cite the evidence in the
+graph.
 
 An out-of-scope issue is settled for the current specification only when in-scope behavior does not require its resolution.
 
@@ -125,4 +130,4 @@ Before finishing, ask “Could an implementer satisfy every behavioral requireme
 
 Finish when every load-bearing issue is accepted or deferred behind a valid boundary, important assumptions and factual dependencies are explicit, terminology is consistent, and cleanup and relevant artifact updates are complete. Leave safely configurable values and local implementation choices open.
 
-Provide or apply the updated specification and supporting artifact changes. Summarize accepted decisions, important deferrals and their boundaries, and unresolved factual dependencies. Include the cleanup report, link decision-graph.ai.md, and state its review status. Begin implementation only when the user explicitly requests it.
+Provide or apply the updated specification and supporting artifact changes. Summarize accepted decisions, important deferrals and their boundaries, and unresolved factual dependencies. Include the cleanup report, a Markdown link such as `[Decision graph](.spec-grill/<spec-slug>/decision-graph.ai.md)` using the actual graph path, and its review status. Begin implementation only when the user explicitly requests it.
