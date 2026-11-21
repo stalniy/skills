@@ -68,7 +68,7 @@ it.skipIf(!process.env.COPILOT_CLI_INTEGRATION).each([
       };
       const home = join(root, "home");
       const result = await runCopilot({
-        ...common, prompt: "Review", artifacts: join(root, "candidate"), sandbox: "workspace-write",
+        ...common, prompt: "Review", artifacts: join(root, "candidate"), sandbox: "workspace-write", isolateWorkspace: true,
         session: { home },
       });
       expect(result.output).toBe("PONG");

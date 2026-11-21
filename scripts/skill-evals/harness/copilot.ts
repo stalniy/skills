@@ -1,12 +1,14 @@
 import { execFile } from "node:child_process";
 import { appendFileSync } from "node:fs";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, mkdtempDisposable, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { getCACertificates } from "node:tls";
 import { promisify } from "node:util";
 import { z } from "zod";
 import type { TranscriptEvent, UsageSummary } from "vitest-evals";
 import { copilotModelSchema } from "../config.ts";
+import { sandboxedInvocation } from "./workspace-sandbox.ts";
 
 const execute = promisify(execFile);
 const eventSchema = z.object({
@@ -26,8 +28,10 @@ const toolCompleteSchema = z.object({
   error: z.object({ message: z.string() }).passthrough().optional(),
 }).passthrough();
 const usageSchema = z.object({
-  model: z.string().optional(), inputTokens: z.number().optional(),
-  outputTokens: z.number().optional(), reasoningTokens: z.number().optional(),
+  model: z.string().optional(),
+  inputTokens: z.number().optional(),
+  outputTokens: z.number().optional(),
+  reasoningTokens: z.number().optional(),
 }).passthrough();
 
 export async function runCopilot(options: {
@@ -40,6 +44,7 @@ export async function runCopilot(options: {
   session?: { home: string; sessionId?: string };
   signal?: AbortSignal;
   executable?: string;
+  isolateWorkspace?: boolean;
 }): Promise<CopilotResult> {
   copilotModelSchema.parse(options.model);
   await mkdir(options.artifacts, { recursive: true });
@@ -60,10 +65,24 @@ export async function runCopilot(options: {
     await writeFile(join(options.artifacts, "invocation.json"), JSON.stringify({
       args, model: options.model, thinking: options.thinking, sandbox: options.sandbox,
     }, null, 2));
-    const execution = execute(options.executable ?? process.env.COPILOT_CLI ?? "copilot", args, {
+    const executable = options.executable ?? process.env.COPILOT_CLI ?? "copilot";
+    const env = { ...process.env, COPILOT_HOME: home, COPILOT_SKILLS_DIRS: "", COPILOT_ALLOW_ALL: "false" };
+    await using launcher = options.isolateWorkspace ? await mkdtempDisposable(join(tmpdir(), "eval-sandbox-")) : undefined;
+    let invocation: { executable: string; args: string[]; env: NodeJS.ProcessEnv } = { executable, args, env };
+    if (launcher) {
+      const caBundle = await writeProxyTrustBundle(launcher.path, env);
+      invocation = await sandboxedInvocation(executable, args, {
+        workspace: options.workspace,
+        runtimeDir: home,
+        launcherHome: launcher.path,
+        readableFiles: [caBundle],
+        env: { ...env, SSL_CERT_FILE: caBundle, NODE_EXTRA_CA_CERTS: caBundle },
+      });
+    }
+    const execution = execute(invocation.executable, invocation.args, {
       cwd: options.workspace, signal: options.signal, timeout: 480_000,
       maxBuffer: 16 * 1024 * 1024, encoding: "utf8",
-      env: { ...process.env, COPILOT_HOME: home, COPILOT_SKILLS_DIRS: "", COPILOT_ALLOW_ALL: "false" },
+      env: invocation.env,
     });
     execution.child.stdin?.end();
     execution.child.stdout?.on("data", chunk => appendFileSync(join(options.artifacts, "trace.jsonl"), chunk));
@@ -89,6 +108,24 @@ export async function runCopilot(options: {
   finally {
     if (!options.session) await rm(home, { recursive: true, force: true });
   }
+}
+
+async function writeProxyTrustBundle(directory: string, env: NodeJS.ProcessEnv): Promise<string> {
+  // Read host trust before launching Copilot, then expose only the PEM bundle to the sandbox.
+  const roots = env.SSL_CERT_FILE
+    ? await readCertificateBlocks(env.SSL_CERT_FILE)
+    : [...getCACertificates("default"), ...getCACertificates("system")];
+  if (env.NODE_EXTRA_CA_CERTS) roots.push(...await readCertificateBlocks(env.NODE_EXTRA_CA_CERTS));
+  const path = join(directory, "tls-roots.pem");
+  await writeFile(path, [...new Set(roots.map(root => root.trim()))].join("\n") + "\n", { mode: 0o600 });
+  return path;
+}
+
+async function readCertificateBlocks(path: string): Promise<string[]> {
+  const pem = await readFile(path, "utf8");
+  const certificates = pem.match(/-----BEGIN CERTIFICATE-----[\s\S]+?-----END CERTIFICATE-----/g);
+  if (!certificates) throw new Error(`No PEM certificates found in ${path}`);
+  return certificates;
 }
 
 export function decodeCopilot(jsonl: string, prompt: string, model?: string): CopilotResult {
