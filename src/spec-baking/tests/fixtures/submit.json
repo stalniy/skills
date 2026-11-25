@@ -1,0 +1,23 @@
+{
+  "event": {
+    "action": "submit",
+    "issues": [
+      {
+        "id": "I1",
+        "depends_on": [],
+        "issue": "Who can publish an article?",
+        "title": "Article publication",
+        "recommendation": "Only editors can publish articles.",
+        "verification": "Identify which roles can publish a draft article.",
+        "rationale": "An editor can check each article before publication.",
+        "evidence": "SPEC.md, Publication: articles require editorial review before publication.",
+        "strategic_impact_value": "high",
+        "strategic_impact_reason": "The publishing role controls who can release content.",
+        "cost_value": "high",
+        "cost_reason": "Changing the role later requires permission and workflow changes.",
+        "externally_observable_value": true,
+        "externally_observable_reason": "Authors see whether they can publish an article."
+      }
+    ]
+  }
+}

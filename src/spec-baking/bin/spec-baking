@@ -1,0 +1,23 @@
+#!/bin/sh
+set -eu
+skill_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+venv=${SPEC_BAKING_VENV:-${XDG_CACHE_HOME:-$HOME/.cache}/spec-baking/venv}
+command=${1:-}
+if [ "$#" -eq 0 ]; then
+  echo 'Usage: spec-baking start ARGS... | client ARGS...' >&2
+  exit 2
+fi
+shift
+case "$command" in
+  start) script=$skill_dir/api/server.py ;;
+  client) script=$skill_dir/api/model_events.py ;;
+  *) echo "Unknown command: $command (use start or client)" >&2; exit 2 ;;
+esac
+if [ -x "$venv/bin/python" ]; then
+  exec "$venv/bin/python" "$script" "$@"
+fi
+if ! command -v uv >/dev/null 2>&1; then
+  echo "Cannot select interpreter: $venv/bin/python and uv are unavailable" >&2
+  exit 1
+fi
+exec uv run --script "$script" "$@"

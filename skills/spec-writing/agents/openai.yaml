@@ -1,0 +1,3 @@
+interface:
+  display_name: "Spec writing"
+  short_description: "Write specs from user intent and codebase evidence"

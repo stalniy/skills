@@ -1,9 +1,10 @@
 # Stalniy Skills
 
-Agent skills for reviewing and improving software specifications.
+Agent skills for writing, reviewing, and improving software specifications.
 
 ## Skills
 
+- **spec-writing** (`skills/spec-writing`): Draft specifications from user intent and codebase evidence. Use FAST to identify required functions and turn them into verifiable requirements.
 - **spec-grilling** (`skills/spec-grilling`): Interactive review that resolves high-impact, costly-to-change decisions with the author, then handles lower-impact by itself.
 - **spec-grilling-auto** (`skills/spec-grilling-auto`): Automatic review that records provisional decisions in an editable decision graph for later review. Built on policies from **spec-grilling**.
 - **spec-review** (`skills/spec-review`): Read-only verification of a spec after grilling (jidoka: stop on defects before they become code). Reports contradictions, ADR conflicts, ambiguity, missing information, assumptions, behavior changes, and needed refactoring, and recommends which requirements to check with Quint, TLA+, or Lean. Designed to run in a subagent so the author can clarify its findings.
