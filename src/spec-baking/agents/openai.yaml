@@ -1,3 +1,5 @@
 interface:
   display_name: "Spec baking with a review engine"
   short_description: "Review a spec interactively with tracked evidence, dependencies, and decisions."
+policy:
+  allow_implicit_invocation: false
