@@ -251,8 +251,14 @@ class ReviewServer(ThreadingHTTPServer):
                 return {"ok": True}
             if isinstance(payload, dict) and "event" in payload:
                 event = payload["event"]
+                require(isinstance(event, dict) and isinstance(event.get("action"), str),
+                        "Expected an event object with an action")
+                action = event["action"]
+                require(action in ("status", "capture_source", "submit", "set_requirement_changes",
+                                   "set_verification", "applied", "retire", "facts", "finish"),
+                        "This endpoint does not accept browser decision actions")
                 result = self._apply_review_event(event, received_at)
-                if self.pending_routing is not None and event["action"] not in ("status", "facts"):
+                if self.pending_routing is not None and action not in ("status", "facts"):
                     if self.routing_delivered:
                         self.pending_routing = None
                     else:
