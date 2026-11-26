@@ -1,5 +1,5 @@
 ---
-name: spec-grilling-d
+name: spec-baking
 license: Apache-2.0
 description: Review a specification interactively and build it from source requirements, settled decisions, and verification instructions.
 compatibility: Requires Python 3.10 or higher and either uv or a prepared Python environment.
@@ -16,7 +16,6 @@ Use ASD-STE100-style Simplified Technical English. Write short, direct sentences
 
 ## Review engine
 
-Use the mode the user requests. If unspecified, ask them to choose chat or the interactive browser and wait for their answer.
 For pasted text with no associated implementation, use the supplied text as the specification.
 
 Use the documented commands, responses, and error messages to start, operate, and stop the review server. Read server implementation files only when diagnosing a specific failure that the documented recovery steps do not resolve, or when the user asks for a code inspection.
@@ -71,13 +70,12 @@ For the first `submit`, read the `issue` definition in the [event schema](api/re
 
 Reuse IDs for revisions. Every prerequisite must exist by batch end. Give each assessment’s concrete consequence. Include the FAST function and the requirement type. Use `requirement_changes` to add exact wording, replace a source requirement by ID, or remove one by ID. Resolve overlapping changes to the same requirement in one decision. Preserve the parts of a source requirement the decision leaves in force. Use prerequisite links for decisions that must be settled first. In `verification`, write a question or instruction that tells the reviewer what to extract from the produced artifacts.
 
-- `frontier` — In chat, fetch records with `status`. Present issues in returned frontier order with recommendation, rationale, evidence and assessments. Map `a I1`, `e I1: <revision>`, and `o I1` to `accept`, `edit`, and `defer` respectively. Capture the full deferral reason and boundary across lines.
 - `recheck` — Once prerequisites are applied, consult `previous` for user direction. Resubmit the full record under its ID even if the recommendation stands. Use `retire` if the issue vanished.
 - `apply` — For each ID in `requirement_changes_needed`, translate the user's revision into exact requirement changes. Send `set_requirement_changes` with `changes` mapping IDs to operation lists. Use the resulting routing to supply or confirm each ID in `verification_needed` with `set_verification`, mapping IDs to inspection instructions in `verifications`. Send an `applied` event when the agreed changes or deferral boundaries and their verification are ready. The server regenerates the specification and marks those IDs applied.
 
 ### Source capture and generated specification
 
-On a fresh review, identify the outcome the source specification promises and state it as the goal in one or two sentences. During FAST analysis, capture the source requirements under their functions. Give each a stable ID such as `R1`, a type, and a source reference. Preserve its meaning and any stated acceptance criteria or verification. Capture explicit exclusions too. Before the first `submit`, send the [`capture_source` event](api/review_event.schema.json) with `goal`, `requirements`, and `exclusions`. If a source statement leaves an implementation choice open, submit an issue proposing the change to that requirement. On resume, reuse the goal and IDs returned in `status` under `source`.
+On a fresh review, identify the outcome the source specification promises and state it as the goal in one or two sentences. During FAST analysis, capture the source specification requirements under their functions. Give each a stable ID such as `R1`, a type, and a source reference. Preserve its meaning and any stated acceptance criteria or verification. Capture explicit exclusions too. Before the first `submit`, send the [`capture_source` event](api/review_event.schema.json) with `goal`, `requirements`, and `exclusions`. If a source statement leaves an implementation choice open, submit an issue proposing the change to that requirement. On resume, reuse the goal and IDs returned in `status` under `source`.
 
 The decision graph shows existing requirements under their functions with the label **From source spec**. The engine links decisions to source requirements they replace or remove. Source requirements stay out of the decision frontier.
 
@@ -91,7 +89,7 @@ The server renders `$review_dir/SPEC.md` deterministically from the saved goal, 
 
 ### Resume and recover
 
-Send `status` after failed calls. Omit `ids` for all active and retired records, specify IDs for selected records, or use `[]` for routing, facts and metadata alone. Retry `applied` for pending IDs once their records are ready. After server failure, relaunch with the same paths and fresh credentials, recover with `status`, and resume in the chosen mode or offer chat.
+Send `status` after failed calls. Omit `ids` for all active and retired records, specify IDs for selected records, or use `[]` for routing, facts and metadata alone. Retry `applied` for pending IDs once their records are ready. After server failure, relaunch with the same paths and fresh credentials, recover with `status`, and resume.
 
 For a resumed review that predates `capture_source`, apply settled changes to its existing specification prose before sending `applied`. The server updates that review's acceptance criteria. Use the generated workflow for fresh reviews.
 
@@ -103,7 +101,7 @@ The agent owns the recommendation. The user owns scope and veto.
 
 Post a progress update when you begin FAST analysis, when you identify each function, and before gathering evidence for each ready issue. On recheck, name the issue and the uncertainty you will investigate. Report which decisions you are applying before sending `applied`. Before the final per-function pass, report which checks you are starting.
 
-1. **Discover and analyze issues with the Function Analysis System Technique (FAST).** Apply FAST using the instructions in this step. Open [FAST reference](references/fast.md) only if the user explicitly asks for it. Start from the captured goal. Ask how each function achieves that outcome and why each supporting function is needed. Where a required function is missing or its relationship to another function is unclear, identify the decision an implementer would face and the outcome it affects. Discover issues in context of every discovered function. Record discovered functions in `$review_dir/functions.json` and use it to map requirements and issues to functions. Update the file when you discover a new function.
+1. **Use the Function Analysis System Technique (FAST) to discover functions in the initial specification.** Open [FAST reference](references/fast.md) only if you have no idea how to discover functions. Start from the captured goal. Ask how each function achieves that outcome and why each supporting function is needed. Where a required function is missing or its relationship to another function is unclear, identify the decision an implementer would face and the outcome it affects. Discover issues in context of every discovered function. Record discovered functions and their relationships in `$review_dir/functions.json` and use it to map requirements and issues to functions. Add stable id to each function. Update the file when you discover a new function.
 2. **Discover the current frontier.** Before submitting, scan each outcome promised by the specification. Include every decision whose recommendation you can make from the current evidence, whichever way the user answers the other open questions. If an answer could change a candidate’s recommendation, postpone that candidate until the prerequisite is applied. Submit the independent decisions together.
 3. **Gather evidence for ready issues.** State the uncertainty and check relevant ADRs, tests, documentation, configuration, and source code in the project associated with the spec. For standalone pasted text, use the supplied spec and record any missing project evidence. Use the evidence handoff below for substantial searches. Cite what settles the issue or supports a recommendation. Keep each recommendation to one decision and its necessary consequences. When a diagram would make the recommended state transitions, dependencies, sequence, or data flow easier to understand, suggest it as an optional addition. Say what it would show. Scope it to the issue and suggest at most one diagram with up to five elements, such as states, steps, or participants. Record missing facts with their authoritative sources.
 4. **Submit ready issues in one JSON batch.** Include new and revised issues, lower-impact choices, and decisions settled by evidence. Record the applied prerequisite IDs and supply the required assessments with reasons.
@@ -118,8 +116,7 @@ Post a progress update when you begin FAST analysis, when you identify each func
 
 Send one `finish` event with the remaining factual dependencies in `facts` when fresh discovery and the per-function review find no further issues and all resolutions are applied. For a captured source, the server publishes the generated specification on finish even if there were no decisions to apply.
 
-- **Browser mode.** Report completion while the session stays open. Keep the server running and continue polling with `next` until the server stops because of idle timeout or the user asks to stop. If the user revises a decision, follow the routing through apply, then finish again once the completion criteria are met.
-- **Chat mode.** After reporting completion, ask whether to stop the session. Stop the server when the user agrees. If they want to keep the session open, leave the server running for their next message and process any revisions through the same review loop.
+Report completion while the session stays open. Keep the server running and continue polling with `next` until the server stops because of idle timeout or the user asks to stop. If the user revises a decision, follow the routing through apply, then finish again once the completion criteria are met.
 
 ### Evidence handoff
 
