@@ -5,7 +5,6 @@
   "type": "module",
   "description": "Serhii Stotskyi's agent skills for modern engineering",
   "scripts": {
-    "build:spec-baking": "vite build src/spec-baking/client",
     "eval:skills": "vitest run --config vitest.evals.config.ts .eval.ts",
     "test:scripts": "vitest run --config vitest.evals.config.ts scripts/skill-evals",
     "validate:types": "tsc --noEmit",
