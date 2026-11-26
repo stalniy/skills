@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Review event",
+  "type": "object",
+  "required": ["action"],
+  "oneOf": [
+    {
+      "required": ["goal", "requirements", "exclusions"],
+      "properties": {
+        "action": { "const": "capture_source" },
+        "goal": { "$ref": "#/$defs/text" },
+        "requirements": { "type": "array", "items": { "$ref": "#/$defs/requirement" } },
+        "exclusions": { "$ref": "#/$defs/textList" }
+      }
+    },
+    {
+      "required": ["issues"],
+      "properties": {
+        "action": { "const": "submit" },
+        "issues": { "type": "array", "items": { "$ref": "#/$defs/issue" } }
+      }
+    },
+    {
+      "required": ["id"],
+      "properties": {
+        "action": { "const": "accept" },
+        "id": { "$ref": "#/$defs/issueId" }
+      }
+    },
+    {
+      "required": ["id", "decision"],
+      "properties": {
+        "action": { "const": "edit" },
+        "id": { "$ref": "#/$defs/issueId" },
+        "decision": { "$ref": "#/$defs/text" }
+      }
+    },
+    {
+      "required": ["id", "question"],
+      "properties": {
+        "action": { "const": "clarify" },
+        "id": { "$ref": "#/$defs/issueId" },
+        "question": { "$ref": "#/$defs/text" }
+      }
+    },
+    {
+      "required": ["id", "reason", "boundary"],
+      "properties": {
+        "action": { "const": "defer" },
+        "id": { "$ref": "#/$defs/issueId" },
+        "reason": { "$ref": "#/$defs/text" },
+        "boundary": { "$ref": "#/$defs/text" }
+      }
+    },
+    {
+      "required": ["changes"],
+      "properties": {
+        "action": { "const": "set_requirement_changes" },
+        "changes": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/issueId" },
+          "additionalProperties": { "$ref": "#/$defs/requirementChanges" }
+        }
+      }
+    },
+    {
+      "required": ["verifications"],
+      "properties": {
+        "action": { "const": "set_verification" },
+        "verifications": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/issueId" },
+          "additionalProperties": { "$ref": "#/$defs/text" }
+        }
+      }
+    },
+    {
+      "required": ["ids"],
+      "properties": {
+        "action": { "const": "applied" },
+        "ids": { "$ref": "#/$defs/issueIds" }
+      }
+    },
+    {
+      "required": ["id", "reason"],
+      "properties": {
+        "action": { "const": "retire" },
+        "id": { "$ref": "#/$defs/issueId" },
+        "reason": { "$ref": "#/$defs/text" }
+      }
+    },
+    {
+      "required": ["facts"],
+      "properties": {
+        "action": { "const": "facts" },
+        "facts": { "type": "array", "items": { "$ref": "#/$defs/fact" } }
+      }
+    },
+    { "properties": { "action": { "const": "finish" }, "facts": { "type": "array", "items": { "$ref": "#/$defs/fact" } } } },
+    {
+      "properties": {
+        "action": { "const": "status" },
+        "ids": { "$ref": "#/$defs/issueIds" }
+      }
+    }
+  ],
+  "$defs": {
+    "text": { "type": "string", "pattern": "\\S" },
+    "requirementId": { "type": "string", "pattern": "^R[1-9][0-9]*(?![\\s\\S])" },
+    "requirementType": { "enum": ["functional", "non-functional"] },
+    "requirement": {
+      "type": "object",
+      "required": ["id", "type", "function", "text", "source"],
+      "properties": {
+        "id": { "$ref": "#/$defs/requirementId" },
+        "type": { "$ref": "#/$defs/requirementType" },
+        "function": { "$ref": "#/$defs/text" },
+        "text": { "$ref": "#/$defs/text" },
+        "source": { "$ref": "#/$defs/text" },
+        "criterion": { "$ref": "#/$defs/text" },
+        "verification": { "$ref": "#/$defs/text" }
+      }
+    },
+    "requirementChanges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation": { "enum": ["add", "replace", "remove"] },
+          "id": { "$ref": "#/$defs/requirementId" },
+          "text": { "$ref": "#/$defs/text" }
+        },
+        "required": ["operation"],
+        "oneOf": [
+          { "properties": { "operation": { "const": "add" }, "id": false }, "required": ["text"] },
+          { "properties": { "operation": { "const": "replace" } }, "required": ["id", "text"] },
+          { "properties": { "operation": { "const": "remove" }, "text": false }, "required": ["id"] }
+        ]
+      }
+    },
+    "issueId": { "type": "string", "pattern": "^I[1-9][0-9]*(?![\\s\\S])" },
+    "issueIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/issueId" }
+    },
+    "textList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/text" }
+    },
+    "impact": { "enum": ["high", "low"] },
+    "fact": {
+      "type": "object",
+      "required": ["fact", "source"],
+      "properties": {
+        "fact": { "$ref": "#/$defs/text" },
+        "source": { "$ref": "#/$defs/text" }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "description": "For open issues, omit settled_status and settled_source. When an identified authority establishes the outcome, supply both fields, cite the authority in evidence, and put the established wording in recommendation. Include the reason and boundary for settled deferrals.",
+      "required": [
+        "id", "depends_on", "issue", "recommendation", "verification", "rationale", "evidence",
+        "strategic_impact_value", "strategic_impact_reason", "cost_value", "cost_reason",
+        "externally_observable_value", "externally_observable_reason"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/issueId" },
+        "depends_on": {
+          "$ref": "#/$defs/issueIds",
+          "description": "IDs of decisions whose outcome could change this recommendation. Use [] when this decision is independent."
+        },
+        "title": { "$ref": "#/$defs/text" },
+        "function": {
+          "type": "string",
+          "description": "Function from FAST analyses this issue relates to"
+        },
+        "type": { "$ref": "#/$defs/requirementType" },
+        "requirement_changes": { "$ref": "#/$defs/requirementChanges" },
+        "issue": { "$ref": "#/$defs/text" },
+        "recommendation": { "$ref": "#/$defs/text" },
+        "verification": { "$ref": "#/$defs/text" },
+        "rationale": {
+          "$ref": "#/$defs/text",
+          "description": "Why the agent recommends this decision."
+        },
+        "evidence": {
+          "$ref": "#/$defs/text",
+          "description": "Cite each source and state what it establishes."
+        },
+        "strategic_impact_value": { "$ref": "#/$defs/impact" },
+        "strategic_impact_reason": { "$ref": "#/$defs/text" },
+        "cost_value": { "$ref": "#/$defs/impact" },
+        "cost_reason": { "$ref": "#/$defs/text" },
+        "externally_observable_value": { "type": "boolean" },
+        "externally_observable_reason": { "$ref": "#/$defs/text" },
+        "assumptions": { "$ref": "#/$defs/textList" },
+        "alternatives": { "$ref": "#/$defs/textList" },
+        "settled_status": { "enum": ["accepted", "out-of-scope"] },
+        "settled_source": { "$ref": "#/$defs/text" },
+        "strategic_impact": false,
+        "cost": false,
+        "externally_observable": false,
+        "settled": false
+      },
+      "dependentRequired": {
+        "settled_status": ["settled_source"],
+        "settled_source": ["settled_status"],
+        "settled_reason": ["settled_status"],
+        "settled_boundary": ["settled_status"]
+      },
+      "if": {
+        "required": ["settled_status"],
+        "properties": { "settled_status": { "const": "out-of-scope" } }
+      },
+      "then": {
+        "required": ["settled_reason", "settled_boundary"],
+        "properties": {
+          "settled_reason": { "$ref": "#/$defs/text" },
+          "settled_boundary": { "$ref": "#/$defs/text" }
+        }
+      }
+    }
+  }
+}

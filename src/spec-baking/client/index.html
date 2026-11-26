@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spec review</title>
+</head>
+<body>
+  <spec-review></spec-review>
+
+  <script>
+    if (location.pathname === "/session") {
+      document.querySelector('spec-review').remove();
+
+      const token = location.hash.slice(1);
+      history.replaceState(null, "", "/session");
+      const status = document.createElement('p');
+      status.textContent = token ? "Opening review…" : "Could not sign in. Open the review using its launch URL.";
+      document.body.appendChild(status);
+      fetch("/api/session", {
+        method: "POST",
+        referrerPolicy: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ open: token }),
+      }).then((response) => {
+        if (!response.ok) throw new Error("Sign-in failed");
+        window.location.href = '/';
+      }).catch((e) => {
+        console.log(e)
+        status.textContent = "Could not sign in. Open the review using its launch URL.";
+      });
+    }
+  </script>
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>

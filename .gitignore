@@ -151,3 +151,9 @@ vite.config.ts.timestamp-*
 .DS_Store
 
 .learn
+
+__pycache__
+
+
+.spec-oven
+.spec-grill
