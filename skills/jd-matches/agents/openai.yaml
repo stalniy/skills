@@ -1,0 +1,5 @@
+interface:
+  display_name: "Job Description matches?"
+  short_description: "Compare a candidate's resume with a job description, assess requirement coverage, identify keyword gaps, and suggest evidence-backed resume edits."
+policy:
+  allow_implicit_invocation: false
