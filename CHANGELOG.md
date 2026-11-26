@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.6](https://github.com/stalniy/skills/compare/v0.0.5...v0.0.6) (2026-11-26)
+
+
+### Features
+
+* adds built version of spec-baking skill ([#14](https://github.com/stalniy/skills/issues/14)) ([757a14d](https://github.com/stalniy/skills/commit/757a14ddede576edab85d363f8fbaf4ccea0f5b8))
+* adds job description matching skill ([#15](https://github.com/stalniy/skills/issues/15)) ([5ec930a](https://github.com/stalniy/skills/commit/5ec930a8acec2c2998df222c0a902e87fa59c0c9))
+* adds spec-baking skill with app inside ([#13](https://github.com/stalniy/skills/issues/13)) ([f0ef531](https://github.com/stalniy/skills/commit/f0ef531aa5022da5c10257e2dd03d49aae25e526))
+
+
+### Code Refactoring
+
+* refactors spec-grilling evals to be extraction based not judge based ([#11](https://github.com/stalniy/skills/issues/11)) ([826935d](https://github.com/stalniy/skills/commit/826935d0342da0292db7a98a9c3e641a90580644))
+
 ## [0.0.5](https://github.com/stalniy/skills/compare/v0.0.4...v0.0.5) (2026-11-19)
 
 
